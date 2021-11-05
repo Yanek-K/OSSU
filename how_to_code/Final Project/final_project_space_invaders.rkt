@@ -116,10 +116,10 @@
 ;; 
 (define (main ws)
   (big-bang ws                   ; WS
-            (on-tick   tock)     ; WS -> WS
-            (to-draw   render)))   ; WS -> Image
-            ;(stop-when ...)      ; WS -> Boolean
-            ;(on-key    ...)))    ; WS KeyEvent -> WS
+    (on-tick   tock)     ; WS -> WS
+    (to-draw   render)   ; WS -> Image
+    ;(stop-when ...)      ; WS -> Boolean
+    (on-key    move-tank)))    ; WS KeyEvent -> WS
 
 ;; WS -> WS
 ;; produce the next tank
@@ -153,7 +153,30 @@
 (check-expect (render T1) (place-image TANK 50 (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving right
 (check-expect (render T2) (place-image TANK 50 (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving left
 
-(define (render ws) ws) ;stub
+;(define (render ws) ws) ;stub
+
+(define (render ws)
+  (place-image TANK (tank-x ws) (- HEIGHT TANK-HEIGHT/2) MTS))
+
+
+
+;; WS -> WS
+;; Move the tank left and right on arrow key
+(check-expect (move-tank (make-tank (/ WIDTH 2) 1)  "left") (make-tank (/ WIDTH 2) -1))
+(check-expect (move-tank T0 "right") T0)
+(check-expect (move-tank T1 "left") (make-tank 50 -1))
+(check-expect (move-tank T1 "right") T1)
+
+(check-expect (move-tank (make-tank WIDTH 1) "left") (make-tank (- WIDTH TANK-SPEED) -1))
+
+;(define (move-tank ws ke) ws) ;stub
+
+(define (move-tank ws ke)
+  (cond
+    [(> (+ (tank-x ws) TANK-SPEED) WIDTH)              (make-tank (- WIDTH TANK-SPEED) -1)]
+    [(< (+ (tank-x ws) (* TANK-SPEED (tank-dir ws))) 0) (make-tank TANK-SPEED            1)]
+    [(key=? ke "left") (make-tank (tank-x ws) -1)]
+    [(key=? ke "right") (make-tank (tank-x ws) 1)]))
 
 
 
@@ -170,4 +193,30 @@
 
 
 
-                           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
