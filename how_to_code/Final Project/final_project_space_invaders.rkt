@@ -100,6 +100,30 @@
 (define (fn-for-missile m)
   (... (missile-x m) (missile-y m)))
 
+;; ListofMissile (ListofM) is one of:
+;; - empty
+;; - (List Missile Missile)
+;; interp. A list of missiles
+ 
+(define LOM1 empty)
+(define LOM2 (list M1))
+(define LOM3 (list (make-missile 100 100) (make-missile 41 41) (make-missile 51 5)))
+(define LOM4 (append LOM2 LOM3))
+(define LOM5 (cons (make-missile 200 200) LOM4))
+
+#;
+(define (fn-for-lom lom)
+  (cond [(empty? lom) (...)]
+        [else
+         (... (fn-for-missile) (first lom))
+         (fn-for-lom) (rest lom)]))
+
+;; Template rules used:
+;; one of: 2 cases
+;; - atomic distinct: empty
+;; - compound (List Missile Missile)
+;; - reference: (first lom)
+;; - self-reference: (rest lom) is ListofMissile
 
 
 (define G0 (make-game empty empty T0))
@@ -111,33 +135,69 @@
 
 ;; Functions:
 
+
+;; * BIG BANG FUNCTIONS
+
 ;; WS -> WS
 ;; start the world with ...
 ;; 
 (define (main ws)
   (big-bang ws                   ; WS
-    (on-tick   tock)     ; WS -> WS
+    (on-tick   next-missiles)     ; WS -> WS
     (to-draw   render)   ; WS -> Image
     ;(stop-when ...)      ; WS -> Boolean
     (on-key    move-tank)))    ; WS KeyEvent -> WS
+
+ 
+;; WS -> WS
+;; Produce the next list of missile advancing by MISSILE SPEED in the Y direction
+(check-expect (next-missiles empty) empty)
+(check-expect (next-missiles M1) (make-missile 150 (+ 300 MISSILE-SPEED)))
+(check-expect (next-missiles LOM3) (list (make-missile 100 (+ 100 MISSILE-SPEED))
+                                         (make-missile 41 (+ 41 MISSILE-SPEED))
+                                         (make-missile 51 (+ 5 MISSILE-SPEED))))
+(check-expect (next-missiles LOM4) (list (make-missile 150 (+ 300 MISSILE-SPEED))
+                                         (make-missile 100 (+ 100 MISSILE-SPEED))
+                                         (make-missile 41 (+ 41 MISSILE-SPEED))
+                                         (make-missile 51 (+ 5 MISSILE-SPEED))))
+
+;(define (next-missiles lom) lom) ;stub
+
+; <Template from ListofMissile>
+
+
+(define (next-missiles lom)
+  (cond [(empty? lom) empty]
+        [else
+         (cons (next-missiles (first lom)) 
+               (next-missiles (rest lom)))]))
+
+;; Missile -> Missile
+;; Moves the missile in the Y direction by MISSILE-SPEED
+
+(define (next-missile m) m)
+
+
+
+;; * TANK FUNCTIONS (as big bang FOR NOW)
 
 ;; WS -> WS
 ;; produce the next tank
 ;; Tank starts stationary, and moves left or right on arrow-key
 ;; Tank will stop when it reaches the edge of the screen 
-(check-expect (tock T0) (make-tank (+ (/ WIDTH 2) TANK-SPEED) 1))                    ; Middle
-(check-expect (tock T1) (make-tank (+          50 TANK-SPEED) 1))                    ; x = 50, moving right
-(check-expect (tock T2) (make-tank (-          50 TANK-SPEED) -1))                   ; x = 50, moving left
+(check-expect (next-tank T0) (make-tank (+ (/ WIDTH 2) TANK-SPEED) 1))                    ; Middle
+(check-expect (next-tank T1) (make-tank (+          50 TANK-SPEED) 1))                    ; x = 50, moving right
+(check-expect (next-tank T2) (make-tank (-          50 TANK-SPEED) -1))                   ; x = 50, moving left
 
-(check-expect (tock (make-tank (- WIDTH 2) 1)) (make-tank WIDTH 1)) ; reaches right edge
-(check-expect (tock (make-tank 2 -1)) (make-tank 0 -1))                              ; reaches left  edge
+(check-expect (next-tank (make-tank (- WIDTH 2) 1)) (make-tank WIDTH 1)) ; reaches right edge
+(check-expect (next-tank (make-tank 2 -1)) (make-tank 0 -1))                              ; reaches left  edge
 
-(check-expect (tock (make-tank WIDTH 1)) (make-tank WIDTH 1))                        ; tries to pass right edge
-(check-expect (tock (make-tank 0 -1)) (make-tank 0 -1))                              ; tries to pass left edge
+(check-expect (next-tank (make-tank WIDTH 1)) (make-tank WIDTH 1))                        ; tries to pass right edge
+(check-expect (next-tank (make-tank 0 -1)) (make-tank 0 -1))                              ; tries to pass left edge
 
-;(define (tock ws) ws) ; stub
+;(define (next-tank ws) ws) ; stub
 
-(define (tock t)
+(define (next-tank t)
   (cond [(> (+ (tank-x t) TANK-SPEED) WIDTH) (make-tank WIDTH (tank-dir t))]
         [(< (+ (tank-x t) (* TANK-SPEED (tank-dir t)))     0) (make-tank 0     (tank-dir t))]
         [else
@@ -145,7 +205,6 @@
                     (tank-dir t))]))
 
  
-
 
 ;; WS -> Image
 ;; render the tank image on the screen
@@ -177,6 +236,10 @@
     [(< (+ (tank-x ws) (* TANK-SPEED (tank-dir ws))) 0) (make-tank TANK-SPEED            1)]
     [(key=? ke "left") (make-tank (tank-x ws) -1)]
     [(key=? ke "right") (make-tank (tank-x ws) 1)]))
+
+
+;; * MISSILE FUNCTIONS
+
 
 
 
