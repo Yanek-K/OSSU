@@ -122,16 +122,29 @@
             ;(on-key    ...)))    ; WS KeyEvent -> WS
 
 ;; WS -> WS
-;; produce the next tank stationary, or moving left or right
-(check-expect (tock T0) (make-tank (+ (/ WIDTH 2) TANK-SPEED) 1))
-(check-expect (tock T1) (make-tank (+          50 TANK-SPEED) 1))
+;; produce the next tank
+;; Tank starts stationary, and moves left or right on arrow-key
+;; Tank will stop when it reaches the edge of the screen 
+(check-expect (tock T0) (make-tank (+ (/ WIDTH 2) TANK-SPEED) 1))                    ; Middle
+(check-expect (tock T1) (make-tank (+          50 TANK-SPEED) 1))                    ; x = 50, moving right
+(check-expect (tock T2) (make-tank (-          50 TANK-SPEED) -1))                   ; x = 50, moving left
+
+(check-expect (tock (make-tank (- WIDTH 2) 1)) (make-tank WIDTH 1)) ; reaches right edge
+(check-expect (tock (make-tank 2 -1)) (make-tank 0 -1))                              ; reaches left  edge
+
+(check-expect (tock (make-tank WIDTH 1)) (make-tank WIDTH 1))                        ; tries to pass right edge
+(check-expect (tock (make-tank 0 -1)) (make-tank 0 -1))                              ; tries to pass left edge
 
 ;(define (tock ws) ws) ; stub
 
 (define (tock t)
-  (make-tank (+ (tank-x t) TANK-SPEED) (tank-dir t)))
+  (cond [(> (+ (tank-x t) TANK-SPEED) WIDTH) (make-tank WIDTH (tank-dir t))]
+        [(< (+ (tank-x t) (* TANK-SPEED (tank-dir t)))     0) (make-tank 0     (tank-dir t))]
+        [else
+         (make-tank (+ (tank-x t) (* TANK-SPEED (tank-dir t)))
+                    (tank-dir t))]))
 
-
+ 
 
 
 ;; WS -> Image
