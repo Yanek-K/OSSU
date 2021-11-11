@@ -14,7 +14,7 @@
 (define CTR-Y (/ HEIGHT 2))
 (define CTR-X (/ WIDTH 2))
 
-(define INVADER-SPEED 2)  ;speeds (not velocities) in pixels per tick
+(define INVADER-SPEED 2)                                    ;speeds (not velocities) in pixels per tick
 (define INVADER-Y-SPEED 1.5)
 (define TANK-SPEED 2)
 (define MISSILE-SPEED 10)
@@ -86,6 +86,7 @@
 (define I1 (make-invader 150 100 2))           ;not landed, moving right
 (define I2 (make-invader 150 HEIGHT 2))       ;exactly landed, moving left
 (define I3 (make-invader 150 (- HEIGHT 10) 2)) ;> landed, moving right
+(define I4 (make-invader 200 200 2))
 
 
 #;
@@ -101,6 +102,7 @@
 (define LOI2 (list I1))
 (define LOI3 (list I2 I1))
 (define LOI4 (list I3 I2 I1))
+(define LOI5 (cons I4 LOI4))
 
 #;
 (define (fn-for-lom lom)
@@ -159,6 +161,7 @@
 (define G2 (make-game (list I1) (list M1) T1))
 (define G3 (make-game (list I1 I2) (list M1 M2) T1))
 (define G4 (make-game empty LOM4 T1))
+(define G5 (make-game LOI5 LOM4 T1))
 
 
 
@@ -202,20 +205,26 @@
               (make-game empty
                          (next-missiles LOM4)
                          (make-tank (+ 50 TANK-SPEED) 1)))
+
+(check-expect (next-game (make-game LOI2 LOM4 T1))
+              (make-game (new-invaders LOI2)
+                         (next-missiles LOM4)
+                         (make-tank (+ 50 TANK-SPEED) 1)))
+
    
 ;(define (next-game ws) ws)
-
+ 
 (define (next-game ws)
   (cond [(empty? (game-tank ws))
          (make-game empty
                     empty
                     (next-tank T0))] 
         [else
-         (make-game empty
+         (make-game (new-invaders (game-invaders ws))
                     (next-missiles (game-missiles ws))
                     (next-tank (game-tank ws)))]))
+   
   
-
 
 ;; WS -> Image
 ;; render the tank and missile on MTS at correct coordinates
@@ -245,16 +254,23 @@
               (overlay
                (render-missiles LOM2.5)
                (render-tank T1)))
+
+(check-expect (render (make-game LOI3 LOM2.5 T1))
+              (overlay
+               (render-invaders LOI3)
+               (render-missiles LOM2.5)
+               (render-tank T1)))
                              
  
 ;(define (render ws) ws) ;stub
 
 (define (render ws)
   (overlay
+   (render-invaders (game-invaders ws))
    (render-missiles (game-missiles ws))
    (render-tank (game-tank ws))))
  
-
+ 
  
 ;; WS KeyEvent -> WS
 ;; Move the tank and shoot a missile
@@ -287,26 +303,84 @@
  
 (define (handle-key ws ke)
   (cond [(key=? ke " ")
-         (make-game empty
+         (make-game (game-invaders ws)
                     (fire-missile (game-missiles ws) (tank-x (game-tank ws)) ke)
                     (game-tank ws))]
         [(key=? ke "left")
-         (make-game empty
+         (make-game (game-invaders ws)
                     (game-missiles ws)
                     (move-tank (game-tank ws) ke))]
         [(key=? ke "right")
-         (make-game empty
+         (make-game (game-invaders ws)
                     (game-missiles ws)
                     (move-tank (game-tank ws) ke))]
         [else ws]))
 
 
-
-
-
-
 ;; * INVADER FUNCTIONS
 
+;; LOI -> LOI
+;; create new invaders if there is no invader in the list
+;;                  or if the (last loi) is at 100 (INVADE-RATE) in the Y-direction
+ 
+(check-random (new-invaders empty) (list (make-invader
+                                          (+ INVADER-SPEED (random 300))
+                                          0
+                                          (cond [(< 0.5 (random 2))
+                                                 (- INVADER-SPEED)]
+                                                [else INVADER-SPEED]))))
+ 
+(check-random (new-invaders LOI2)  (list (make-invader
+                                          (+ INVADER-SPEED (random 300))
+                                          0
+                                          (cond [(< 0.5 (random 2))
+                                                 (- INVADER-SPEED)]
+                                                [else INVADER-SPEED]))
+                                         (make-invader 152 (+ 2 INVADE-RATE) 2)))
+
+(check-random (new-invaders
+               (list (make-invader 100 INVADE-RATE INVADER-SPEED)
+                     (make-invader 200 200 INVADER-SPEED)))
+              (next-invaders
+               (list
+                (make-invader
+                 (random WIDTH)
+                 -2
+                 (cond [(< 0.5 (random 2))
+                        (- INVADER-SPEED)]
+                       [else INVADER-SPEED]))
+                (make-invader 100 INVADE-RATE INVADER-SPEED)
+                (make-invader 200 200 INVADER-SPEED))))
+        
+;(define (new-invader loi) empty)
+ 
+(define (new-invaders loi)
+  (cond [(empty? loi)
+         (next-invaders (new-invader loi))]
+        [(= INVADE-RATE (invader-y (first loi)))
+         (next-invaders (new-invader loi))]
+        [else (next-invaders loi)]))
+
+   
+ 
+;; LOI -> Invader
+;; create a new invader if the (last loi) has moved INVADE-RATE in the Y-direction
+(check-random (new-invader LOI1) (list (make-invader (random 300) -2 INVADER-SPEED)))
+(check-random (new-invader LOI2) (list (make-invader (random 300) -2 INVADER-SPEED) I1))
+(check-random (new-invader (list I4 I2 I1)) (list (make-invader (random 300) -2 INVADER-SPEED) I4 I2 I1))
+  
+;(define (new-invader loi) empty) ;stub
+
+(define (new-invader loi)
+  (cons (make-invader
+         (random 300)
+         -2
+         (cond [(< 0.5 (random 2))
+                (- INVADER-SPEED)]
+               [else INVADER-SPEED])) loi))
+
+
+   
 ;; LOI -> LOI
 ;; produce the next list of invader, advancing by invader-x and invader-y speed
 ;; HAVE TO FIGURE OUT HOW TO MAKE INVADER-RATE WORK -> HELPER FUNCTION ***
@@ -334,38 +408,71 @@
                (next-invaders (rest loi)))]))
 
 
-
 ;; Invader -> Invader
 ;; Move the invader down the screen at a 45 degree angle
 ;; bounce off edges
 (check-expect (next-invader I1) (make-invader (+ 150 INVADER-SPEED) (+ 100 INVADER-SPEED) INVADER-SPEED))
 (check-expect (next-invader I2) (make-invader (+ 150 INVADER-SPEED) (+ HEIGHT INVADER-SPEED) INVADER-SPEED))
 
-(check-expect (next-invader (make-invader 300 200 INVADER-SPEED)) (make-invader (- 300 INVADER-SPEED) (+ 200 INVADER-SPEED) INVADER-SPEED))
-(check-expect (next-invader (make-invader 0 240   INVADER-SPEED)) (make-invader (+ 0 INVADER-SPEED) (+ 240 INVADER-SPEED) INVADER-SPEED))
-
+(check-expect (next-invader (make-invader 300 200 INVADER-SPEED)) (make-invader (- 300 INVADER-SPEED) (+ 200 INVADER-SPEED) (- INVADER-SPEED)))
+(check-expect (next-invader (make-invader 0 240   INVADER-SPEED)) (make-invader (+ 0 INVADER-SPEED) (+ 240 INVADER-SPEED) (- INVADER-SPEED)))
+ 
 ;(define (next-invader i) empty)
  
 (define (next-invader i)
   (cond [(>= (+ (invader-x i) INVADER-SPEED) WIDTH)
-         (make-invader (- (invader-x i) INVADER-SPEED)
-                       (+ (invader-y i) INVADER-SPEED)
-                       (invader-v i))]
+         (make-invader (+ (invader-x i) (- (invader-v i)))
+                       (+ (invader-y i) INVADER-Y-SPEED)
+                       (- (invader-v i)))]
         [(<= (invader-x i) 0)
          (make-invader (+ (invader-x i) INVADER-SPEED)
-                       (+ (invader-y i) INVADER-SPEED)
-                       (invader-v i))]
-         (else
-          (make-invader (+ (invader-x i) INVADER-SPEED)
-                        (+ (invader-y i) INVADER-SPEED)
-                        (invader-v i)))))
+                       (+ (invader-y i) INVADER-Y-SPEED)
+                       (- (invader-v i)))]
+        (else
+         (make-invader (+ (invader-x i) (invader-v i))
+                       (+ (invader-y i) INVADER-Y-SPEED)
+                       (invader-v i)))))
+
+ 
+;; LOI -> LOI
+;; track if any invaders have reached the bottom of the screen
+;; GAME OVER
 
 ;; LOI -> Image
 ;; render the list of invaders on the screen
-
-(define (render-invaders loi) empty-image)
+(check-expect (render-invaders LOI1) OUTLINE)
+(check-expect (render-invaders LOI2) (place-image INVADER 150 100 OUTLINE))
+(check-expect (render-invaders LOI3) (place-image INVADER 150 HEIGHT (place-image INVADER 150 100 OUTLINE)))
+(check-expect (render-invaders (list (make-invader 200 200 2)
+                            (make-invader 150 (- HEIGHT 10) 2)
+                            (make-invader 150 HEIGHT 2)
+                            (make-invader 150 100 2)))
+              (place-image INVADER 200 200
+                           (place-image INVADER 150 (- HEIGHT 10)
+                                        (place-image INVADER 150 HEIGHT
+                                                     (place-image INVADER 150 100 OUTLINE)))))
  
+;(define (render loi) empty-image) ;stub
+
+(define (render-invaders loi)
+  (cond [(empty? loi) OUTLINE]
+        [else
+         (render-invader (first loi)
+                         (render (rest loi)))]))
   
+
+;; Invader -> Image
+;; render the invader on the screen
+(check-expect (render-invader I1 OUTLINE) (place-image INVADER 150 100 OUTLINE))
+(check-expect (render-invader I4 OUTLINE) (place-image INVADER 200 200 OUTLINE))
+
+;(define (render-invader i) empty-image) ;stub
+
+(define (render-invader i img)
+  (place-image INVADER (invader-x i) (invader-y i) img))
+
+
+   
 ;; * MISSILE FUNCTIONS
  
 ;; LOM -> LOM
