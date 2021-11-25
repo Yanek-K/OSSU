@@ -21,7 +21,7 @@
 
 (define HIT-RANGE 20)
 
-(define INVADE-RATE 100)
+(define INVADE-RATE 2)
 
 (define MTS (empty-scene WIDTH HEIGHT))
 (define OUTLINE (rectangle WIDTH HEIGHT "outline" "transparent"))
@@ -159,12 +159,12 @@
 (define G0 (make-game empty empty T0))
 (define G1 (make-game empty empty T1))
 (define G2 (make-game (list I1) (list M1) T1))
-(define G3 (make-game (list I1 I2) (list M1 M2) T1))
+(define G3 (make-game (list I2 I1) (list M1 M2) T1))
 (define G4 (make-game empty LOM4 T1))
 (define G5 (make-game LOI5 LOM4 T1))
 
 
-
+ 
 ;; ===================================
 
 ;; Functions:
@@ -179,10 +179,10 @@
   (big-bang ws                   ; WS
     (on-tick   next-game)     ; WS -> WS
     (to-draw   render)   ; WS -> Image
-    ;(stop-when ...)      ; WS -> Boolean
+    (stop-when game-over?)      ; WS -> Boolean
     (on-key    handle-key)))    ; WS KeyEvent -> WS
- 
- 
+  
+  
 ;; WS -> WS 
 ;; Call helper functions to produce the next state of the game
 (check-expect (next-game (make-game empty empty empty)) (make-game empty empty (make-tank (+ 2(/ WIDTH 2)) 1)))
@@ -205,11 +205,11 @@
                          (next-missiles LOM4)
                          (make-tank (+ 50 TANK-SPEED) 1)))
 
-(check-random (next-game (make-game LOI2 LOM4 T1))
-              (make-game (new-invaders LOI2)
-                         (next-missiles LOM4)
+(check-random (next-game (make-game (list (make-invader 150 150 2)) LOM2 T1))
+              (make-game (new-invaders (list (make-invader 150 150 2)))
+                         (next-missiles LOM2)
                          (make-tank (+ 50 TANK-SPEED) 1)))
-
+    
 (check-random (next-game (make-game
                           (list (make-invader 198 188 2))
                           (list (make-missile 200 200))
@@ -220,7 +220,7 @@
                           (list I4 I3 I1)
                           (list M7 (make-missile 150 115))
                           T1))
-              (make-game (make-invader 152 492 2) empty (make-tank 52 1)))
+              (make-game (list (make-invader 152 492 2)) empty (make-tank 52 1)))
  
 (check-random (next-game (make-game
                           (list (make-invader 150 300 2)
@@ -229,7 +229,7 @@
                                 I1)
                           (list M1 M7 (make-missile 150 120))
                           T1))
-              (make-game (make-invader 152 492 2)
+              (make-game (list (make-invader 152 492 2))
                          empty
                          (make-tank 52 1)))
                           
@@ -249,7 +249,7 @@
                                                        (game-invaders ws)))
                     (next-tank (game-tank ws)))]))
   
- 
+   
  
 ;; WS -> Image
 ;; render the tank and missile on MTS at correct coordinates
@@ -305,8 +305,21 @@
    (render-invaders (game-invaders ws))
    (render-missiles (game-missiles ws))
    (render-tank     (game-tank     ws))))
- 
-     
+
+
+;; WS -> Boolean
+;; Ends the game when an invader has landed on the bottom of MTS
+(check-expect (game-over? G0) false)
+(check-expect (game-over? G1) false)
+(check-expect (game-over? G3) true)
+
+;(define (game-over? ws) false);stub
+
+(define (game-over? ws)
+  (invader-landed? (game-invaders ws)))
+            
+              
+                 
  
 ;; WS KeyEvent -> WS
 ;; Move the tank and shoot a missile
@@ -421,35 +434,22 @@
                                           (cond [(< 0.5 (random 2))
                                                  (- INVADER-SPEED)]
                                                 [else INVADER-SPEED]))))
+    
+(check-random (new-invaders LOI2)  (list (make-invader 152 102 2))) 
    
-(check-random (new-invaders LOI2)  (list (make-invader
-                                          (+ INVADER-SPEED (random 300))
-                                          2
-                                          (cond [(< 0.5 (random 2))
-                                                 (- INVADER-SPEED)]
-                                                [else INVADER-SPEED]))
-                                         (make-invader 152 (+ 2 INVADE-RATE) 2))) 
- 
 (check-random (new-invaders
-               (list (make-invader 100 INVADE-RATE INVADER-SPEED)
+               (list (make-invader 100 5 INVADER-SPEED)
                      (make-invader 200 200 INVADER-SPEED)))
-              (next-invaders
-               (list
-                (make-invader
-                 (random WIDTH)
-                 0
-                 (cond [(< 0.5 (random 2))
-                        (- INVADER-SPEED)]
-                       [else INVADER-SPEED]))
-                (make-invader 100 INVADE-RATE INVADER-SPEED)
-                (make-invader 200 200 INVADER-SPEED))))
-        
+              (list 
+               (make-invader 102 7 INVADER-SPEED)
+               (make-invader 202 202 INVADER-SPEED)))
+         
 ;(define (new-invader loi) empty) ;stub
  
 (define (new-invaders loi)
   (cond [(empty? loi)
          (next-invaders (new-invader loi))]
-        [(= INVADE-RATE (invader-y (first loi)))
+        [(< (random 100) INVADE-RATE)
          (next-invaders (new-invader loi))]
         [else (next-invaders loi)]))
 
@@ -578,6 +578,22 @@
   (place-image INVADER (invader-x i) (invader-y i) img))
 
 
+;; Invader -> Boolean
+;; Produces true if the invader has reached the bottom of the MTS
+(check-expect (invader-landed? LOI1) false)
+(check-expect (invader-landed? LOI2) false)
+(check-expect (invader-landed? LOI3) true)
+              
+;(define (invader-landed loi) false) ;stub
+
+(define (invader-landed? loi)
+  (cond [(empty? loi) false]
+        [else
+         (if (= HEIGHT (invader-y (first loi)))
+             true
+             (invader-landed? (rest loi)))]))
+          
+   
    
 ;; * MISSILE FUNCTIONS
 
@@ -593,10 +609,10 @@
 (check-expect (missed-missiles (list M7 (make-missile 150 100)) LOI2)      ; two missiles, one invader - one hit
               (list M7))
 
-(check-expect (missed-missiles (list M8 M7) (list (make-invader 200 250 2) I4))  ; two missiles, two invaders - two hit
+(check-expect (missed-missiles (list M8 M7) (list (make-invader 200 250 2) I4))                             ; two missiles, two invaders - two hit
               empty)
 
-(check-expect (missed-missiles (list M4 (make-missile 150 100)) (list I4 I1 (make-invader 41 41 2)))  ; two missiles, three invaders - two hit
+(check-expect (missed-missiles (list M4 (make-missile 150 100)) (list I4 I1 (make-invader 41 41 2)))        ; two missiles, three invaders - two hit
               empty)
   
 (check-expect (missed-missiles (list M5 M8 M7) (list (make-invader 100 100 2) I4 (make-invader 100 20 2)))  ; three missiles, three invaders - two hit
@@ -610,18 +626,20 @@
   (cond [(or (empty? lom)
              (empty? loi)) lom]
         [else
-         (if (not (missile-hit? (first lom) (first loi)))
-             (cons (first lom) (missed-missiles (rest lom) loi))
-             (missed-missiles (rest lom) (rest loi))
-             )]))
+         (if (empty? (missile-hit-any? (first lom) loi))
+             (missed-missiles (rest lom) loi)
+             (cons (first lom) (missed-missiles (rest lom) loi)))]))
+; (missed-missiles (rest lom) (rest loi))
+;(cons (first lom) (missed-missiles (rest lom) loi))
+;)]))
+    
   
- 
-;; Missile LOI -> Boolean
-;; Returns true if a Missile is within Hit-Range of any Invader
-(check-expect (missile-hit-any? M1 LOI2) false)
-(check-expect (missile-hit-any? M7 (list I4 I1)) true)
-(check-expect (missile-hit-any? M7 (list I2 I3 I4)) true)
-(check-expect (missile-hit-any? M4 (list I4 I2 I3)) false)
+;; Missile LOI -> Missile
+;; Returns a Missile if it missed all Invader
+(check-expect (missile-hit-any? M1 LOI2) M1)
+(check-expect (missile-hit-any? M7 (list I4 I1)) empty)
+(check-expect (missile-hit-any? M7 (list I2 I3 I4)) empty)
+(check-expect (missile-hit-any? M4 (list I4 I2 I3)) M4)
 
 ;(define (missile-hit-any? m loi) false) ;stub
 
@@ -629,10 +647,11 @@
   (cond [(empty? loi) m]
         [else
          (if (not (missile-hit? m (first loi)))
-             m
-             (missile-hit-any? m (rest loi)))]))
+             (missile-hit-any? m (rest loi))
+             empty
+             )]))
+   
  
-
 ;; Missile Invader -> Boolean
 ;; Returns true if a Missile is within HIT-RANGE of a Invader
 (check-expect (missile-hit? M1 I1) false)
@@ -816,9 +835,9 @@
 
 ;; WS -> Image
 ;; render the tank image on the screen
-(check-expect (render-tank T0) (place-image TANK (/ WIDTH 2) (- HEIGHT TANK-HEIGHT/2) MTS))   ; Middle
-(check-expect (render-tank T1) (place-image TANK 50 (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving right
-(check-expect (render-tank T2) (place-image TANK 50 (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving left
+(check-expect (render-tank T0) (place-image TANK (/ WIDTH 2) (- HEIGHT TANK-HEIGHT/2) MTS))            ; Middle
+(check-expect (render-tank T1) (place-image TANK         50  (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving right
+(check-expect (render-tank T2) (place-image TANK         50  (- HEIGHT TANK-HEIGHT/2) MTS))            ; x = 50, moving left
 
 ;(define (render ws) ws) ;stub
 
@@ -826,7 +845,7 @@
   (cond [(empty? ws) MTS]
         [else
          (place-image TANK (tank-x ws) (- HEIGHT TANK-HEIGHT/2) MTS)]))
-
+ 
 
 
 ;; WS -> WS
