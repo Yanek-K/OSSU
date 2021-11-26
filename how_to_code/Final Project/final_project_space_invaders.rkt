@@ -17,7 +17,7 @@
 (define INVADER-SPEED 2)                                    ;speeds (not velocities) in pixels per tick
 (define INVADER-Y-SPEED 2)
 (define TANK-SPEED 2)
-(define MISSILE-SPEED 40)                                   ; 0 - 40
+(define MISSILE-SPEED 30)                                   ; 0 - 40
 
 (define HIT-RANGE 20) 
 
@@ -175,10 +175,10 @@
 ;; Functions:
 
 
-;; BIG BANG FUNCTIONS
+;; * BIG BANG FUNCTIONS
 
 ;; WS -> WS
-;; start the world with ...
+;; run the program to start the game
 ;; 
 (define (main ws)
   (big-bang ws                  ; WS
@@ -317,7 +317,6 @@
 (define (game-over? ws)
   (invader-landed? (game-invaders ws)))
             
-              
                  
  
 ;; WS KeyEvent -> WS
@@ -390,9 +389,6 @@
 (check-expect (safe-invaders (list I4 I1 I3) (list M7 (make-missile 150 100)))  ; three invaders, two missiles - two hit
               (list I3))
 
-(check-expect (safe-invaders (list I3 I4 I1) (list M7 (make-missile 150 100)))
-              (list I3)) 
-
 
 ;(define (safe-invaders loi lom) empty)
 
@@ -423,7 +419,7 @@
 ;; create new invaders if there is no invader in the list
 ;; or if a random number (between 0 and 99) is less than INVADE-RATE
  
-(check-random (new-invaders empty)                              ; make a new invader with random x coordinate and random direction
+(check-random (new-invaders empty)                                                             ; make a new invader with random x coordinate and random direction
               (list (make-invader                     
                      (+ INVADER-SPEED (random 300))
                      INVADER-Y-SPEED
@@ -438,7 +434,7 @@
                (make-invader (+ INVADER-SPEED 100) (+ INVADER-Y-SPEED 5)  INVADER-SPEED)
                (make-invader (+ INVADER-SPEED 200) (+ INVADER-Y-SPEED 200) INVADER-SPEED)))
           
-;(define (new-invader loi) empty) ;stub
+;(define (new-invader loi) loi) ;stub
  
 (define (new-invaders loi)
   (cond [(empty? loi)
@@ -475,7 +471,7 @@
                                         [else INVADER-SPEED]))
                     I4 I2 I1))
    
-;(define (new-invader loi) empty) ;stub
+;(define (new-invader loi) loi) ;stub
 
 (define (new-invader loi)
   (cons (make-invader
@@ -662,8 +658,7 @@
         [else
          (if (missile-hit? m (first loi))
              true
-             (missile-hit-any? m (rest loi))
-             )]))
+             (missile-hit-any? m (rest loi)))]))
 
 
  
@@ -874,3 +869,8 @@
     [(key=? ke "left") (make-tank (tank-x ws) -1)]
     [(key=? ke "right") (make-tank (tank-x ws) 1)]))
 
+
+
+;; Start Game 
+;; Start the world with no missiles, no invaders and one tank
+(main G0)
