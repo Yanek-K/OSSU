@@ -235,74 +235,47 @@
 (check-expect (solved? BD4) false)
 (check-expect (solved? BD4s) true)
 
-;(define (solved? bd) false) ;stub
-
 (define (solved? bd)
-  (cond [(not (full? bd)) false]
-        [else
-         (if (all-true?
-              (row-unique? bd)
-              (col-unique? bd)
-              (box-unique? bd))
-             true
-             false)]))
- 
-;; Board -> Boolean
-;; Produces True if the board is full
-;; !!!
-
-(define (full? bd) false)
-
-;; Boolean Boolean Boolean -> Boolean
-;; Produces True if all its arguments are true
-;; !!!
-
-(define (all-true? row col box)
-  (and (not (false? row))
-       (not (false? col))
-       (not (false? box))))
-             
-
-;; Board -> Boolean
-;; Produces True if every value in a ROW is unique
-(check-expect (row-unique? BD5) false)
-(check-expect (row-unique? BD5s) true)
-
-(define (row-unique? bd)
-
-  ; Check if each item in the first row is unique
-  ;   - have a list of 9 numbers,
-  ;   - if the first number is a 1, remove the 1 from the list of numbers
-  ;;  - continue until the end of the row
-  ;   - if every number is used, repeat with the next row
-  ;   - if there is a number left in the list, return false
-  )
-
-;; Board -> Boolean
-;; Produces True if every value in a COLUMN is unique
-;; !!!
-
-(define (col-unique? bd) false)
-
-;; Board -> Boolean
-;; Produces True if every value in a BOX is unique
-;; !!!
-
-(define (box-unique? bd) false)
-
-
-
+  (andmap number? bd))
 
 
 ;; Board -> (listof Board)
 ;; Produce a list of valid next boards from board
 ;; Finds first empty square, fills it with Natural [1,9]
 ;; and keeps only the valid boards
+(check-expect (next-boards (cons 1 (rest BD1)))
+              (list (cons 1 (cons 2 (rest (rest BD1))))
+                    (cons 1 (cons 3 (rest (rest BD1))))
+                    (cons 1 (cons 4 (rest (rest BD1))))
+                    (cons 1 (cons 5 (rest (rest BD1))))
+                    (cons 1 (cons 6 (rest (rest BD1))))
+                    (cons 1 (cons 7 (rest (rest BD1))))
+                    (cons 1 (cons 8 (rest (rest BD1))))
+                    (cons 1 (cons 9 (rest (rest BD1))))))
+
+(define (next-boards bd)
+  (keep-only-valid (fill-with-1-9 (find-blank bd) bd)))
+  
+
+;; Board -> Pos
+;; Produces the position of the first blank square
+;; Assume: The board has at least one blank square
 ;; !!!
 
-(define (next-boards bd) empty) ;stub
+(define (find-blank bd) 0) ;stub
 
+;; Pos Board -> (ListOfBoard)
+;; Produce 9 boards with blank filled with Natural [1,9]
+;; !!!
 
+(define (fill-with-1-9 p bd) empty) ;stub
+
+;; (ListOfBoard) -> (ListofBoard)
+;; Produce list containing only valid boards
+;; !!!
+
+(define (keep-only-valid lobd) empty) ;stub
+            
 
 ;; Board Pos -> Val or false
 ;; Produce value at given position on board.
