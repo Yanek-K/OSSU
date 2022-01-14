@@ -229,10 +229,70 @@
 
 ;; Board -> Boolean
 ;; Produce True if the board is solved
-;; Assume: board is valid, solved if it full
+;; Assume: board is valid, solved if it is full
+(check-expect (solved? BD1) false)
+(check-expect (solved? BD2) false)
+(check-expect (solved? BD4) false)
+(check-expect (solved? BD4s) true)
+
+;(define (solved? bd) false) ;stub
+
+(define (solved? bd)
+  (cond [(not (full? bd)) false]
+        [else
+         (if (all-true?
+              (row-unique? bd)
+              (col-unique? bd)
+              (box-unique? bd))
+             true
+             false)]))
+ 
+;; Board -> Boolean
+;; Produces True if the board is full
 ;; !!!
 
-(define (solved? bd) false) ;stub
+(define (full? bd) false)
+
+;; Boolean Boolean Boolean -> Boolean
+;; Produces True if all its arguments are true
+;; !!!
+
+(define (all-true? row col box)
+  (and (not (false? row))
+       (not (false? col))
+       (not (false? box))))
+             
+
+;; Board -> Boolean
+;; Produces True if every value in a ROW is unique
+(check-expect (row-unique? BD5) false)
+(check-expect (row-unique? BD5s) true)
+
+(define (row-unique? bd)
+
+  ; Check if each item in the first row is unique
+  ;   - have a list of 9 numbers,
+  ;   - if the first number is a 1, remove the 1 from the list of numbers
+  ;;  - continue until the end of the row
+  ;   - if every number is used, repeat with the next row
+  ;   - if there is a number left in the list, return false
+  )
+
+;; Board -> Boolean
+;; Produces True if every value in a COLUMN is unique
+;; !!!
+
+(define (col-unique? bd) false)
+
+;; Board -> Boolean
+;; Produces True if every value in a BOX is unique
+;; !!!
+
+(define (box-unique? bd) false)
+
+
+
+
 
 ;; Board -> (listof Board)
 ;; Produce a list of valid next boards from board
