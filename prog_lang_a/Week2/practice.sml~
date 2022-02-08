@@ -1,0 +1,13 @@
+
+(* Practice SML Functions (source is Racket Simple Data) *)
+
+(* int list -> int list *)
+(* Doubles every number in a list *)
+
+fun double_all (xs : int list) =
+    if null xs
+    then []
+    else (hd xs * 2) :: double_all(tl xs);
+
+double_all([1,2,3,4]); (* Should equal ([2,4,6,8]) *)
+
