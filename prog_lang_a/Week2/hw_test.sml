@@ -14,11 +14,19 @@ val test15 = is_older ((3,2,2),(3,2,1)) = false
 	
 val test2  = number_in_month ([(2012,2,28),(2013,12,1)],2) = 1
 val test21 = number_in_month ([(2012,2,23),(2013,2,23),(2014,3,23),(2015,2,23)],2) = 3
+
+											 
+val test3  = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = 3
+val test31 = number_in_months ([], [2,3,4]) = 0						val test32 = number_in_months ([(2012,2,28),(2013,12,1)],[]) = 0
+val test33 = number_in_months ([(2012,1,28)], [1]) = 1
+val test34 = number_in_months ([(2012,2,28)], [1]) = 0
+
+											
+val test4  = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]
+val test41 = dates_in_month ([(2012,1,23),(2012,2,23),(2013,1,23)], 1) = [(2012,1,23),(2013,1,23)]
+	
+
 (*
-val test3 = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = 3
-
-val test4 = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]
-
 val test5 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = [(2012,2,28),(2011,3,31),(2011,4,28)]
 
 val test6 = get_nth (["hi", "there", "how", "are", "you"], 2) = "there"

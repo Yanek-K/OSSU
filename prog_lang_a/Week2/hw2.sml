@@ -33,7 +33,8 @@ fun is_older((y1 : int,m1 : int,d1 : int),(y2 : int, m2 : int, d2 : int))=
 	    then true 
 	    else false;
 
-(* List of Dates * Month -> Int 
+(* Function 2
+   List of Dates * Month -> Int 
    Produces the number of dates in the given month *)
 
 fun number_in_month ((date : (int*int*int) list), (x : int)) =
@@ -47,5 +48,34 @@ fun number_in_month ((date : (int*int*int) list), (x : int)) =
 	    else tl_ans
 	end;
 	
-    
-    
+
+(* Function 3
+   List of Dates * ListofMonths -> int 
+   Produces the number of dates that are in the list of months *)
+
+fun number_in_months ((dates: (int*int*int) list), (months : int list)) =
+    if null months then 0
+    else
+	let val prev_true = number_in_month (dates, (hd months)) = 1
+	in
+	    if prev_true
+	    then 1 + number_in_months (dates, (tl months))
+	    else number_in_months (dates, (tl months))
+	end;
+	    
+(* Function 4 
+   Listof Dates * Month -> Listof Dates
+   Produces a list hodling the dates that are in the month
+   Dates should be in original order *)
+
+fun dates_in_month ((dates: (int*int*int) list), (month : int)) =
+    if null dates
+    then []
+    else
+	let val tl_ans = dates_in_month ((tl dates), month)
+	in
+	    if (#2 (hd dates)) = month
+	    then hd dates :: tl_ans
+	    else tl_ans
+	end;
+	     
