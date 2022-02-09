@@ -79,3 +79,52 @@ fun dates_in_month ((dates: (int*int*int) list), (month : int)) =
 	    else tl_ans
 	end;
 	     
+(* Function 5 
+   ListofDates * ListofMonths -> ListofDates
+   Returns a list holding the dates that are in list of months *)
+
+fun dates_in_months ((dates: (int*int*int) list), (months: int list)) =
+    if null months then []
+    else
+	let val prev_true = dates_in_month (dates, (hd months))
+	in
+	   if null prev_true
+	   then dates_in_months(dates, (tl months))
+	   else prev_true @ dates_in_months(dates, (tl months))
+	end;
+
+(* Function 6
+   ListofStrings * Int -> String
+   Returns the string at int position in the list *)
+
+fun get_nth ((strings: string list), n:int) =
+    if length strings < n then ""
+    else
+	if n = 1
+	then (hd strings)
+	else get_nth ((tl strings, (n - 1)));
+
+(* Function 7 
+   Date -> String
+   Produces a string of form January 20, 2013 *)
+
+(* use ^ (shift 6) for concatenating strings 
+   use library function Int.toString to convert int to string
+   for month, use a list holding 12 strings
+   put a comma following th day and capitalized English Month Names *)
+
+fun date_to_string (date: (int*int*int)) =
+    let val months = ["January", "February", "March", "April",
+			  "May", "June", "July", "August", "September",
+			  "October", "November", "December"]		     
+    in
+	get_nth(months, #2 date) ^ " " ^
+	Int.toString(#3 date) ^ ", " ^
+	Int.toString (#1 date)
+    end;
+		      
+
+
+
+
+		     

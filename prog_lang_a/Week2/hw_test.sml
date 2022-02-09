@@ -25,14 +25,15 @@ val test34 = number_in_months ([(2012,2,28)], [1]) = 0
 val test4  = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]
 val test41 = dates_in_month ([(2012,1,23),(2012,2,23),(2013,1,23)], 1) = [(2012,1,23),(2013,1,23)]
 	
-
-(*
 val test5 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = [(2012,2,28),(2011,3,31),(2011,4,28)]
 
-val test6 = get_nth (["hi", "there", "how", "are", "you"], 2) = "there"
-
+val test60 = get_nth (["hi", "there", "how", "are", "you"], 2) = "there"
+val test61 = get_nth ([],1) = ""
+val test62 = get_nth (["hi","there"], 3) = ""
+val test63 = get_nth (["hi", "there", "how", "are", "you"], 4) = "are"
+								    
 val test7 = date_to_string (2013, 6, 1) = "June 1, 2013"
-
+(*
 val test8 = number_before_reaching_sum (10, [1,2,3,4,5]) = 3
 
 val test9 = what_month 70 = 3
