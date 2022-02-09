@@ -126,7 +126,7 @@ fun date_to_string (date: (int*int*int)) =
     end;
 		      
 
-(*
+(* Function 8
 int * ListofInt -> int
 sum * int list  -> n
 Assume : sum is positive, int list is all positive, entire list sums to more than sum
@@ -143,14 +143,26 @@ number_before_reaching_sum (10, [1,2,3,4,5]) = 3
 number_before_reaching_sum (2, [1,2,3,4]) = 1
 *)
 
-fun sum_list (numlist : int list) =
-    if null numlist
-    then 0
-    else
-	(hd numlist) + (sum_list (tl numlist));
-
-fun sum_less_than_head (sum: int, head: int, count: int) =
-    if sum < head
-	     
 
 fun number_before_reaching_sum (sum:int, numlist: int list) =
+    if hd numlist > sum then 0
+    else
+	let fun find_sum (count: int, total:int, numlist: int list) =
+		if total < sum
+		then find_sum (count + 1, total + hd numlist, tl numlist)
+		else count - 1
+	in
+	    find_sum (0, 0, numlist)
+	end;
+
+
+exception EmptyList
+fun number_before_reaching_sum_2 (sum: int, numlist: int list) =
+    if null numlist then raise EmptyList
+    else
+	if hd numlist >= sum
+	then 0
+	else
+	    1 + (number_before_reaching_sum_2 (sum - hd numlist, tl numlist));
+       
+       
