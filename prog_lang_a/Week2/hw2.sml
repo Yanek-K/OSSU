@@ -104,14 +104,16 @@ fun get_nth ((strings: string list), n:int) =
 	then (hd strings)
 	else get_nth ((tl strings, (n - 1)));
 
-(* Function 7 
-   Date -> String
-   Produces a string of form January 20, 2013 *)
+(*
+Function 7 
+Date -> String
+Produces a string of form January 20, 2013
 
-(* use ^ (shift 6) for concatenating strings 
-   use library function Int.toString to convert int to string
-   for month, use a list holding 12 strings
-   put a comma following th day and capitalized English Month Names *)
+-TIPS
+use ^ (shift 6) for concatenating strings 
+use library function Int.toString to convert int to string
+for month, use a list holding 12 strings
+put a comma following th day and capitalized English Month Names *)
 
 fun date_to_string (date: (int*int*int)) =
     let val months = ["January", "February", "March", "April",
@@ -124,7 +126,31 @@ fun date_to_string (date: (int*int*int)) =
     end;
 		      
 
+(*
+int * ListofInt -> int
+sum * int list  -> n
+Assume : sum is positive, int list is all positive, entire list sums to more than sum
 
+Produces an int n such that 
+	 the first n elements of the list add to less than sum
+         the first n+1 elements add to sum or more 
+*)
 
+(* 
+examples 
 
-		     
+number_before_reaching_sum (10, [1,2,3,4,5]) = 3
+number_before_reaching_sum (2, [1,2,3,4]) = 1
+*)
+
+fun sum_list (numlist : int list) =
+    if null numlist
+    then 0
+    else
+	(hd numlist) + (sum_list (tl numlist));
+
+fun sum_less_than_head (sum: int, head: int, count: int) =
+    if sum < head
+	     
+
+fun number_before_reaching_sum (sum:int, numlist: int list) =
