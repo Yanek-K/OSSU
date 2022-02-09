@@ -1,11 +1,17 @@
+use "hw2.sml";
 (* Homework1 Simple Test *)
 (* These are basic test cases. Passing these tests does not guarantee that your code will pass the actual homework grader *)
 (* To run the test, add a new line to the top of this file: use "homeworkname.sml"; *)
 (* All the tests should evaluate to true. For example, the REPL should say: val test1 = true : bool *)
 
+val test1  = is_older ((3,2,3),(4,3,4)) = true
+val test11 = is_older ((3,2,1),(3,3,1)) = true
+val test12 = is_older ((3,2,1),(3,2,2)) = true
+val test13 = is_older ((3,2,1),(2,3,2)) = false
+val test14 = is_older ((3,2,1),(3,1,2)) = false
+val test15 = is_older ((3,2,2),(3,2,1)) = false
 
-val test1 = is_older ((1,2,3),(2,3,4)) = true
-
+(*	
 val test2 = number_in_month ([(2012,2,28),(2013,12,1)],2) = 1
 
 val test3 = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = 3
@@ -25,3 +31,4 @@ val test9 = what_month 70 = 3
 val test10 = month_range (31, 34) = [1,2,2,2]
 
 val test11 = oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
+*)
