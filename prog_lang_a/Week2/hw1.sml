@@ -166,3 +166,60 @@ fun number_before_reaching_sum_2 (sum: int, numlist: int list) =
 	    1 + (number_before_reaching_sum_2 (sum - hd numlist, tl numlist));
        
        
+(* Function 9 
+
+Int -> Int
+Produces the month that the day is from
+e.g. Day 30  = January 30  - Month 1
+     Day 250 = September 7 - Month 9
+
+ *)
+
+fun what_month (day:int) =
+    let val month_list = [31,28,31,30,31,30,31,31,30,31,30,31]
+    in
+	1 + number_before_reaching_sum (day, month_list)
+    end;
+	
+	
+(* Function 10 
+
+int * int -> int list
+day1 day2 -> [m1, m2, ... mn]
+Produces a list where m1 is the month of day1, m2 is the month of day1 + 1
+up until day2 (mn is month of day2)
+
+ *)
+
+fun month_range (day1:int, day2:int) =
+    if day1 < day2
+    then what_month(day1) :: month_range (day1 + 1, day2)
+    else what_month(day2) :: [];
+
+(* Function 11
+
+ListofDates -> (int*int*int) OPTION
+Produces NONE if the list has no dates and SOME d if d is the oldest
+
+ *)
+
+
+fun oldest (dates0: (int*int*int) list) =
+    if null dates0
+    then NONE
+    else
+	let fun current (dates: (int*int*int) list) =
+		if null (tl dates)
+		then hd dates
+		else
+		    let val ans = current (tl dates)
+		    in
+			if   is_older (hd dates, ans)
+			then hd dates
+			else ans
+		    end
+	in
+	    SOME (current dates0)
+	end;
+				 
+   

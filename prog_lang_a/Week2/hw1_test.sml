@@ -1,4 +1,4 @@
-use "hw2.sml";
+use "hw1.sml";
 (* Homework1 Simple Test *)
 (* These are basic test cases. Passing these tests does not guarantee that your code will pass the actual homework grader *)
 (* To run the test, add a new line to the top of this file: use "homeworkname.sml"; *)
@@ -41,11 +41,14 @@ val test82 = number_before_reaching_sum (5, [2,1,0,1,4,5]) = 4
 val test800 = number_before_reaching_sum_2 (10, [1,2,3,4,5]) = 3
 val test801 = number_before_reaching_sum_2 (2, [1,2,3,4]) = 1
 val test802 = number_before_reaching_sum_2 (5, [2,1,0,1,4,5]) = 4
-							     
-							       (*
-val test9 = what_month 70 = 3
+							     							       
+val test90 = what_month 70 = 3
+val test91 = what_month 250 = 9
+val test92 = what_month 30 = 1
+				 
 
-val test10 = month_range (31, 34) = [1,2,2,2]
+val test100 = month_range (31, 34) = [1,2,2,2]
+val test101 = month_range (58, 61) = [2,2,3,3]
 
 val test11 = oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
-*)
+
