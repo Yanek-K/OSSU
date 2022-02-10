@@ -155,6 +155,13 @@ fun number_before_reaching_sum (sum:int, numlist: int list) =
 	    find_sum (0, 0, numlist)
 	end;
 
+(*
+fun number_before_reaching_sum ( sum : int, ints : (int) list ) =
+    if hd ints >= sum
+    then 0
+    else number_before_reaching_sum (sum - (hd ints), tl ints) + 1;
+*)
+
 
 exception EmptyList
 fun number_before_reaching_sum_2 (sum: int, numlist: int list) =
@@ -222,4 +229,16 @@ fun oldest (dates0: (int*int*int) list) =
 	    SOME (current dates0)
 	end;
 				 
-   
+(* 
+fun oldest ( dates : (int*int*int) list ) =
+    if null (dates)
+    then NONE
+    else
+        let
+          val tl_ans = oldest (tl dates)
+        in
+          if isSome (tl_ans) andalso is_older (valOf tl_ans, hd dates)
+          then tl_ans
+          else SOME (hd dates)
+        end
+*)
