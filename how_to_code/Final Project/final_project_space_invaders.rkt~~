@@ -264,7 +264,7 @@
                (render-tank T0)))
 
 (check-expect (render (make-game empty LOM2 T1))
-              (overlay  
+              (overlay
                (render-invaders empty)
                (render-missiles LOM2)
                (render-tank T1)))

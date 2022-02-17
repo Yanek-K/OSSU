@@ -62,6 +62,13 @@ fun number_in_months ((dates: (int*int*int) list), (months : int list)) =
 	    then 1 + number_in_months (dates, (tl months))
 	    else number_in_months (dates, (tl months))
 	end;
+
+(*
+fun number_in_months (dates : (int * int * int) list, months : int list) = 
+    if null months 
+    then 0
+    else number_in_month(dates, hd months) + number_in_months(dates, tl months)
+*)
 	    
 (* Function 4 
    Listof Dates * Month -> Listof Dates
@@ -92,6 +99,12 @@ fun dates_in_months ((dates: (int*int*int) list), (months: int list)) =
 	   then dates_in_months(dates, (tl months))
 	   else prev_true @ dates_in_months(dates, (tl months))
 	end;
+(*
+fun dates_in_months (dates : (int * int * int) list, months : (int) list) = 
+    if null months
+    then []
+    else dates_in_month(dates, hd months) @ dates_in_months(dates, tl months) 
+*)
 
 (* Function 6
    ListofStrings * Int -> String
