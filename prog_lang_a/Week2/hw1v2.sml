@@ -12,12 +12,10 @@ fun is_older (date1: int*int*int, date2: int*int*int) =
 	#1 date1 = #1 date2
 	andalso #2 date1 < #2 date2
     then true
-    else if
+    else
 	#1 date1 = #1 date2
 	andalso #2 date1 = #2 date2
-	andalso #3 date1 < #3 date2
-    then true
-    else false;
+	andalso #3 date1 < #3 date2;
 
 (* 
 Listof Dates * Month (i.e. an int) -> Int
@@ -75,4 +73,71 @@ fun get_nth (strings: string list, n:int) =
     then hd strings
     else get_nth (tl strings, n - 1);
 
+(*
+Date -> String
+Returns a string in the form "January 20, 2013"
+*)
 
+fun date_to_string (date: int*int*int) =
+    let val month_list =
+	    ["January", "February", "March", "April",
+	     "May", "June", "July", "August", "September",
+	     "October", "November", "December"]
+	
+    in
+	get_nth (month_list, #2 date)
+	^ " " ^  Int.toString (#3 date)
+	^ ", " ^ Int.toString (#1 date)
+    end;
+
+(* 
+Sum (int) * int list -> int
+ASSUME: Sum is positive, int list is positive, entire list sums to more than sum
+Produces an int n such that the first n elements add to less 
+than the sum, the first n + 1 elements add to sum or more
+*)
+
+fun number_before_reaching_sum (sum: int, nums: int list) =
+    if sum > hd nums
+    then 1 + (number_before_reaching_sum (sum - hd nums, tl nums))
+    else 0;
+
+(* 
+int -> month
+Produces the month the day is in
+*)
+
+fun what_month (day: int) =
+    let val days_in_months = [31,28,31,30,31,30,31,31,30,31,30,31]
+    in 1 + number_before_reaching_sum (day, days_in_months)
+    end;
+
+
+(* 
+Day1 * Day2 -> int list 
+Returns an int list where m1 is the month of day1, m2 is the month of day1+1 
+and mn is the month of day2
+Length is 0 if day1> day2
+*)
+
+fun month_range (day1: int, day2: int) =
+    if day1 > day2
+    then []
+    else what_month day1 :: month_range(day1 + 1, day2);
+
+(* 
+date list -> int*int*int OPTION
+Produces NONE if the list has no dates and SOME d if the date d is the oldest
+*)
+
+fun oldest (dates : (int*int*int) list) =
+    if null (dates)
+    then NONE
+    else
+        let
+          val tl_ans = oldest (tl dates)
+        in
+          if isSome (tl_ans) andalso is_older (valOf tl_ans, hd dates)
+          then tl_ans
+          else SOME (hd dates)
+        end
