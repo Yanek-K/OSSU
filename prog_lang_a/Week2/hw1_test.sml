@@ -20,6 +20,7 @@ val test3  = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)]
 val test31 = number_in_months ([], [2,3,4]) = 0						val test32 = number_in_months ([(2012,2,28),(2013,12,1)],[]) = 0
 val test33 = number_in_months ([(2012,1,28)], [1]) = 1
 val test34 = number_in_months ([(2012,2,28)], [1]) = 0
+val test35 = number_in_months ([(1,2,25),(3,5,26),(1,12,29),(3,2,28),(1,2,27),(1,2,25),(6,7,8)],[2]) = 4;
 
 											
 val test4  = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]

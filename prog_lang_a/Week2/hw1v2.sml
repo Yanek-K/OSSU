@@ -24,8 +24,7 @@ Produces the number of months that are in the given month
 
 fun number_in_month (date: (int*int*int) list, month: int) =
     if null date then 0
-    else if
-	(#2 (hd date)) = month
+    else if (#2 (hd date)) = month
     then 1 + number_in_month (tl date, month)
     else number_in_month (tl date, month);
 
@@ -36,9 +35,7 @@ Produces the number of dates in the list that are in the list of months
 
 fun number_in_months (dates : (int*int*int) list, months: int list) =
     if null months orelse null dates then 0
-    else if number_in_month (dates, hd months) > 0 
-    then 1 + number_in_months (dates, tl months)
-    else number_in_months (dates, tl months);
+    else number_in_month (dates, hd months) + number_in_months (dates, tl months);
 
 (* 
 Listof Dates * Month (int) -> ListofDates
@@ -140,4 +137,17 @@ fun oldest (dates : (int*int*int) list) =
           if isSome (tl_ans) andalso is_older (valOf tl_ans, hd dates)
           then tl_ans
           else SOME (hd dates)
-        end
+        end;
+
+(* 
+Listof Dates * Listof Months -> Int 
+Produces the number of dates in the list that are in the list of months
+*)
+
+fun number_in_months_challenge (dates : (int*int*int) list, months: int list) =
+    if null months orelse null dates then 0
+    else if number_in_month (dates, hd months) > 0 
+    then 1 + number_in_months (dates, tl months)
+    else number_in_months (dates, tl months);
+
+
