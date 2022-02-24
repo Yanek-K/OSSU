@@ -207,4 +207,39 @@ fun int_to_nat n =
 	0 => ZERO
       | n => SUCC(int_to_nat (n - 1)); 
 
+(* 
+13
+nat * nat -> nat
+Produces the sum of the two args
+*)
+
+fun add (nat1, nat2) =
+    case nat2 of
+	ZERO => nat1
+      | SUCC (nat2') => add ( SUCC(nat1), (nat2')); 
+
+(*
+14
+nat * nat -> nat
+Subtracts nat1 from nat2
+*)
+
+fun sub (nat1, nat2) =
+    case nat2 of
+	ZERO => nat1
+      | SUCC (nat2') => sub (pred(nat1), nat2');
+
+(* 
+16 
+nat * nat -> bool 
+Produces True if nat1 < nat2
+*)
+
+fun less_than nats =
+    case nats of
+	(_, ZERO) => false
+      | (ZERO, _) => true
+      | (SUCC(nat1'),SUCC(nat2')) => less_than (nat1', nat2'); 
+	
+
 

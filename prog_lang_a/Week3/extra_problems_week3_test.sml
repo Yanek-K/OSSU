@@ -159,7 +159,29 @@ val test_int_to_nat = int_to_nat (2) = SUCC (SUCC ZERO);
 val test_int_to_nat = int_to_nat (~2)
 		      = ZERO andalso false handle Negative => true | _ => false;
 val test_int_to_nat = int_to_nat (~100)
-		      = ZERO andalso false handle Negative => true | _ => false; 
+		      = ZERO andalso false handle Negative => true | _ => false;
+
+(* Natural Numbers -- 13 *)
+val test_add_1 = add (ZERO, ZERO) = ZERO;
+val test_add_2 = add ((SUCC ZERO), (ZERO)) = (SUCC ZERO);
+val test_add_3 = add ((SUCC ZERO), (SUCC ZERO)) = (SUCC (SUCC ZERO));
+val test_add_4 = add ((SUCC (SUCC ZERO)), (SUCC (SUCC ZERO)))
+		 = (SUCC (SUCC (SUCC (SUCC ZERO))));
+val test_add_5
+    = add ((SUCC (SUCC (SUCC (SUCC ZERO)))), (SUCC (SUCC (SUCC (SUCC ZERO)))))
+      = (SUCC (SUCC (SUCC (SUCC (SUCC (SUCC (SUCC (SUCC ZERO))))))));
+
+(* Natural Numbers -- 14 *)
+val test_sub = sub (ZERO, ZERO) = ZERO;
+val test_sub = sub ((SUCC ZERO), ZERO) = (SUCC ZERO);
+val test_sub = sub ((SUCC (SUCC ZERO)), (SUCC ZERO)) = (SUCC ZERO);
+val test_sub = sub ((SUCC (SUCC (SUCC ZERO))), (SUCC ZERO)) = (SUCC (SUCC ZERO));
+
+(* Natural Numbers -- 16 *)
+val test_less_than_1 = less_than (ZERO, ZERO) = false;
+val test_less_than_2 = less_than (ZERO, (SUCC ZERO)) = true;
+val test_less_than_3 = less_than ((SUCC ZERO), ZERO) = false;
+val test_less_than_4 = less_than ((SUCC (SUCC ZERO)), SUCC ZERO) = false;
 
 
 
@@ -178,10 +200,7 @@ val test_int_to_nat = int_to_nat (~100)
 
 
 
-
-
-
-	 (*
+(*
 (** Back To The Future! **)
 
 (* GCD -- Redux *)
