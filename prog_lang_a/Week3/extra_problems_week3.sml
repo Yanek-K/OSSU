@@ -1,4 +1,4 @@
-(* Part One *)
+(** Part One **)
 
 (* Datatypes *)
 type student_id = int;
@@ -50,9 +50,10 @@ fun number_misgraded (pair_list) =
       | (fail, x)::rest => (if has_passed (x) then 1 else 0)
 			   + number_misgraded(rest);
 
-(* Part Two *)
+(** Part Two **)
 
 (* Datatypes *)
+
 datatype 'a tree =
 	 leaf
 	 | node of { value: 'a,
@@ -149,4 +150,61 @@ fun myconcat xss =
     case xss of
 	[] => []
       | (xs::xss') => xs @ myconcat (xss');
+
+(** Part Three **)
+
+(* Datatypes *)
+
+(* 
+A "natural" number is either zero or the "successor" of another integer.
+E.g. - 2 is SUCC (SUCC ZERO) 
+*)
+
+datatype nat = ZERO | SUCC of nat;
+
+(* 9
+nat -> bool
+Produces true if the number is positive (i.e. not zero)
+ *)
+
+fun is_positive nat =
+    case nat of
+	ZERO => false
+      | _ => true; 
+
+(* 10 
+nat -> nat
+Produces the predecessor to the "natural" 
+ *)
+exception Negative
+	      
+fun pred nat =
+    case nat of
+	ZERO => raise Negative
+      | SUCC(nat') => (nat');
+
+(* 11
+nat -> int
+Produces the corresponding int
+E.g. - SUCC (SUCC ZERO)) = 2
+ *)
+
+fun nat_to_int nat =
+    case nat of
+	ZERO => 0
+      | SUCC (nat') => 1 + nat_to_int (nat'); 				    
+
+(* 12
+int -> nat 
+Produces a "natural" representation of the int,
+Exception if the integer was negatve
+ *)
+
+fun int_to_nat n =
+    if n < 0 then raise Negative
+    else
+    case n of
+	0 => ZERO
+      | n => SUCC(int_to_nat (n - 1)); 
+
 

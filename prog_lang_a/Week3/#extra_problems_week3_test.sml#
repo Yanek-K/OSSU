@@ -159,28 +159,7 @@ val test_int_to_nat = int_to_nat (2) = SUCC (SUCC ZERO);
 val test_int_to_nat = int_to_nat (~2)
 		      = ZERO andalso false handle Negative => true | _ => false;
 val test_int_to_nat = int_to_nat (~100)
-		      = ZERO andalso false handle Negative => true | _ => false; 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		      = ZERO andalso false handle Negative => true | _ => false;
 	 (*
 (** Back To The Future! **)
 
