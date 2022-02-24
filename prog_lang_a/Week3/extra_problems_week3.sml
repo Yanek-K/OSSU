@@ -1,5 +1,6 @@
 (* Part One *)
 
+(* Datatypes *)
 type student_id = int;
 type grade = int (* must be in 0 - 100 range *);
 type final_grade = { id : student_id, grade : grade option};
@@ -35,23 +36,6 @@ fun number_passed student =
 	x::students => (if has_passed x then 1 else 0) + number_passed students
       | []  => 0;
 
-
-
-(* 4a
-{grade:int option, id: 'a} list -> (pass_fail * 'a list) list
-Produces a list of tuples with pass_fail as the first element and the student id
-as the second element - pass if the student passed, fail if not
-Order the list so that all passes come first
- *)
-
-(*
-fun group_by_outcome (students : {id:int, grade:int option} list) =
-    case students of
-	student::students' => if has_passed student 
-			   then (pass, student id) :: group_by_outcome students 
-			   else (fail, id) :: group_by_outcome student		
-	| _  => [];	
-*)
 
 (* #4b
 (pass_fail * final_grade) list -> int
@@ -106,4 +90,54 @@ fun gardener tree =
 		  left = gardener ltree,
 		  right = gardener rtree}
       | _ => leaf;
+
+(* 8a
+'a list -> 'a
+Produces the last element in the list, null if empty
+ *)
+exception Empty;
+
+fun mylast input_list =
+    case input_list of
+	[] => raise Empty
+      | x::[] => x
+      | x::xs' => mylast (xs');
+
+(* 8b
+'a list, int -> 'a list 
+Produces the first i elements of the list
+Raises Subscript error if i < 0 or i > length list
+ *)
+
+fun mytake (xs,i) =
+    if i < 0 then raise Subscript
+    else
+	case xs of
+	    [] => []
+	 |  (x::xs') => if i > 0
+			then x :: mytake (xs', i-1)
+			else []; 
+
+(* 8c
+'a list int -> 'a list
+Produces what is left after dropping the first i elements of the list l 
+ *)
+
+fun mydrop (xs, i) =
+    if i < 0 then raise Subscript
+    else if i = 0 then xs
+    else
+	case xs of
+	    [] => []
+	  | (_::xs') => mydrop (xs', i - 1);
+	
+(* 8d 
+'a list list -> 'a list
+Produces the list that is the concatenation of all the list in l 
+ *)
+
+fun myconcat xss =
+    case xss of
+	[] => []
+      | (xs::xss') => xs @ myconcat (xss');
 

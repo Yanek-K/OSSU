@@ -54,22 +54,6 @@ val test_number_misgraaded_5 =
 		       (pass, {id = 2, grade = SOME 0}),
 		       (fail, {id = 3, grade = SOME 100}),
 		       (fail, {id = 4, grade = NONE})]) = 2;									     
-
-				       (*
-(* Pass/Fail -- 4 *)
-val test_group_by_outcome_1 = group_by_outcome [{ id = 1025, grade = NONE },
-    { id = 4, grade = SOME 99 }] = [(pass, [4]), (fail, [1025])]
-val test_group_by_outcome_2 = group_by_outcome [{ id = 1025, grade = SOME 82 },
-    { id = 4, grade = SOME 99 }] = [(pass, [1025, 4])]
-val test_group_by_outcome_3 = group_by_outcome [{ id = 1025, grade = NONE },
-    { id = 4, grade = SOME 34 }] = [(fail, [1025, 4])]
-val test_group_by_outcome_4 = group_by_outcome [{ id = 1025, grade = SOME 76 }, { id = 4, grade = SOME 99 },
-    { id = 13, grade = NONE }, { id = 34, grade = SOME 74 },
-    { id = 1111, grade = SOME 89 }] = [(pass, [1025, 4, 1111]), (fail, [13, 34])]
-(* causes polyEqual warning if group_by_outcome has a polymorphic type -- that's ok *)
-val test_group_by_outcome_5 = group_by_outcome [] = []
-				       *)
-
 (** Forest For The Trees **)
 
 (* Forest For The Trees -- 1 *)
@@ -116,7 +100,40 @@ val test_gardener_7 = gardener (node { value = leave_me_alone, left = leaf, righ
     node { value = leave_me_alone, left = leaf, right = leaf }
 val test_gardener_8 = gardener (node { value = leave_me_alone, left = leaf,
     right = node { value = prune_me, left = node { value = prune_me, left = leaf, right = leaf }, right = leaf } }) =
-    node { value = leave_me_alone, left = leaf, right = leaf }
+		      node { value = leave_me_alone, left = leaf, right = leaf };
+
+(* Build SML Library List Functions *)
+
+(* SML Library Last *)
+val test_mylast_2 = mylast [1,3,4] = 4;
+val test_mylast_2 = mylast [1] = 1;
+val test_mylast_3 = mylast [1,2] = 2;
+val test_mylast_4 = mylast ["ab", "cd", "ef"] = "ef";
+val test_mylast_5 = mylast [(1,2),(3,4), (5,6)] = (5,6);
+
+(* SML Library Take *)
+val test_mytake_1 = mytake ([1,2,3], 0) = [];
+val test_mytake_2 = mytake ([1,2,3], 2) = [1,2];
+val test_mytake_3 = mytake (["ab", "cd", "ef"], 1) = ["ab"];
+val test_mytake_4 = mytake ([(1,2), (3,4), (5,6), (7,8)], 4)
+		    = [(1,2), (3,4), (5,6), (7,8)];
+val test_mytake_5 = mytake ([(1,2), (3,4), (5,6), (7,8)], 3)
+		    = [(1,2), (3,4), (5,6)];
+
+(* SML Library Drop *)
+val test_mydrop_1 = mydrop ([1,2,3], 2) = [3];
+val test_mydrop_2 = mydrop ([1,2,3,4,5,6], 2) = [3,4,5,6];
+val test_mydrop_3 = mydrop (["a", "b", "c"], 0) = ["a", "b", "c"];
+val test_mydrop_4 = mydrop (["a", "b", "c"], 3) = [];
+
+(* SML Library Concat *)
+val test_myconcat_1 = myconcat ([[], [1]]) = [1];
+val test_myconcat_2 = myconcat ([[1,2,3], [4,5,6]]) = [1,2,3,4,5,6];
+val test_myconcat_3 = myconcat ([[1], [4,5,6]]) = [1,4,5,6];
+val test_myconcat_4 = myconcat ([[1,2,3], [4]]) = [1,2,3,4];
+val test_myconcat_5 = myconcat ([[1,2,3], [4,5,6], [7,8,9]]) = [1,2,3,4,5,6,7,8,9];
+val test_myconcat_6 = myconcat ([["a", "b", "c"], ["d", "e", "f"]])
+		      = ["a","b","c","d","e","f"];
 
 	 (*
 (** Back To The Future! **)
