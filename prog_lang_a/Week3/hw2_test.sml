@@ -1,10 +1,23 @@
 (* Homework2 Simple Test *)
-(* These are basic test cases. Passing these tests does not guarantee that your code will pass the actual homework grader *)
-(* To run the test, add a new line to the top of this file: use "homeworkname.sml"; *)
-(* All the tests should evaluate to true. For example, the REPL should say: val test1 = true : bool *)
+use "hw2.sml";
 
-val test1 = all_except_option ("string", ["string"]) = SOME []
+val test10 = all_except_option ("str", ["str"]) =  SOME [];
+val test11 = all_except_option ("str", ["notstring"]) = NONE;
+val test12 = all_except_option ("str", ["str", "notstring"]) = SOME ["notstring"];
+val test13 = all_except_option ("str", ["not", "the", "one"]) = NONE
+val test14 = all_except_option ("str", ["not", "one", "str"]) = SOME ["not", "one"];
 
+val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
+val test20 = get_substitutions1 ([["Jeff"], ["Michael"]], "foo") = [];
+val test21 = get_substitutions1 ([["foo", "fee"],["there"]], "foo") = ["fee"];
+val test22 = get_substitutions1 ([["foo", "fee"],["there", "foo"]], "foo")
+	     = ["fee", "there"];
+val test23 = get_substitutions1 ([["Fred", "Frederick"],
+				  ["Jeff", "Jeffrey"],
+				  ["Jeff", "Geoff", "Jeffrey"]], "Jeff")
+	     = ["Jeffrey", "Geoff", "Jeffrey"];
+
+							    (*
 val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
 
 val test3 = get_substitutions2 ([["foo"],["there"]], "foo") = []
@@ -37,5 +50,5 @@ val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
                          42);
                false) 
               handle IllegalMove => true)
-             
+         *)    
              
