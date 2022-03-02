@@ -42,12 +42,37 @@ val test44 = similar_names ([["Mike", "Michael"], ["Mike", "Les", "King"]],
 		{first="Michael", last="Smith", middle="P"},
 		{first="Les", last="Smith", middle="P"},
 		{first="King", last="Smith", middle="P"}];
+
+val test50 = card_color (Clubs, Num 2) = Black;
+val test51 = card_color (Spades, Num 2) = Black;
+val test52 = card_color (Hearts, Num 2) = Red;
+val test53 = card_color (Diamonds, Num 2) = Red;
+
+val test60 = card_value (Clubs, Num 2) = 2;
+val test61 = card_value (Hearts, Ace) = 11;
+val test62 = card_value (Diamonds, Num 9) = 9;
+val test63 = card_value (Clubs, Jack) = 10;
+val test64 = card_value (Clubs, King) = 10;
+
+val test70 = remove_card ([(Hearts, Ace)], (Hearts, Ace), IllegalMove) = []
+val test71 = remove_card ([(Hearts, Ace), (Diamonds, Ace)],
+			  (Hearts, Ace), IllegalMove) = [(Diamonds,Ace)]
+val test72 = remove_card ([(Hearts, Ace), (Diamonds, Ace), (Clubs, Num 2)],
+			  (Hearts, Ace), IllegalMove) = [(Diamonds,Ace),(Clubs,Num 2)]
+val test73 = remove_card ([(Hearts, Ace), (Diamonds, King),
+			   (Spades, Num 2), (Clubs, Num 8)],
+			  (Hearts, Ace), IllegalMove)
+	     =  [(Diamonds,King),(Spades,Num 2),(Clubs,Num 8)]		    
+val test74 = remove_card ([(Hearts, Ace), (Diamonds, King),
+			   (Spades, Num 2), (Clubs, Num 8), (Hearts, Ace)],
+			  (Hearts, Ace), IllegalMove)
+	     = [(Diamonds,King),(Spades,Num 2),(Clubs,Num 8),(Hearts,Ace)];
+val test75 = remove_card ([(Hearts, Ace), (Diamonds, King), (Hearts, Ace),
+			   (Spades, Num 2), (Clubs, Num 8), (Hearts, Ace)],
+			  (Hearts, Ace), IllegalMove)
+	     =  [(Diamonds,King),(Hearts,Ace),(Spades,Num 2),(Clubs,Num 8),(Hearts,Ace)] 
+
 (*
-val test5 = card_color (Clubs, Num 2) = Black
-
-val test6 = card_value (Clubs, Num 2) = 2
-
-val test7 = remove_card ([(Hearts, Ace)], (Hearts, Ace), IllegalMove) = []
 
 val test8 = all_same_color [(Hearts, Ace), (Hearts, Ace)] = true
 
