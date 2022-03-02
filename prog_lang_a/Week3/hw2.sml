@@ -107,23 +107,58 @@ fun card_value card =
 Removes the first occurence of card if in the card list, or exception
 *)
 
-fun remove_card (card_list, card, e) =
-    case card_list of
+fun remove_card (cardlist, card, e) =
+    case cardlist of
 	[] => raise e
       | head::rest => if head = card then rest
-		      else head :: remove_card (card_list, card, e);
+		      else head :: remove_card (cardlist, card, e);
 
 (* 2d
-card list => Boolean
 Produces true if all the cards in the list are the same color
  *)
 
-fun all_same_color card_list =
-    case card_list of
+fun all_same_color cardlist =
+    case cardlist of
 	[] => true
       | _ :: [] => true
       | head::(neck::rest) => (card_color(head) = card_color(neck) andalso
 			       all_same_color (neck::rest));  
 
+(* 2e
+Produces the sum of the values of all cards in the list
+ *)
 
-val test8 = all_same_color [(Hearts, Ace), (Hearts, Ace)] = true	
+fun sum_cards cardlist =
+    let fun helper (cardlist,acc) =
+	    case cardlist of
+		[] => acc
+	      | head::rest =>  helper (rest, (card_value(head) + acc))
+    in
+	helper(cardlist, 0)
+    end;
+
+(* 2f
+Produces the score of the hand according to the rules of the game:
+ *)
+
+fun score (cardlist, goal) =
+    let val sum = sum_cards (cardlist)
+	val prelim_score = if sum > goal
+			   then ((sum - goal) * 3)
+			   else (goal-sum)
+    in
+	if all_same_color (cardlist)
+	then prelim_score div 2
+	else prelim_score
+    end;
+
+
+
+							 
+					      
+					      
+
+
+    
+								
+								

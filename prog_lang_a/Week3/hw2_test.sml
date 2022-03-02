@@ -70,13 +70,26 @@ val test74 = remove_card ([(Hearts, Ace), (Diamonds, King),
 val test75 = remove_card ([(Hearts, Ace), (Diamonds, King), (Hearts, Ace),
 			   (Spades, Num 2), (Clubs, Num 8), (Hearts, Ace)],
 			  (Hearts, Ace), IllegalMove)
-	     =  [(Diamonds,King),(Hearts,Ace),(Spades,Num 2),(Clubs,Num 8),(Hearts,Ace)] 
+	     =  [(Diamonds,King),(Hearts,Ace),(Spades,Num 2),(Clubs,Num 8),(Hearts,Ace)];
 
+val test80 = all_same_color [(Hearts, Ace), (Hearts, Ace)] = true;
+val test81 = all_same_color [(Hearts, Ace), (Hearts, King)] = true;
+val test82 = all_same_color [(Hearts, Ace), (Hearts, Ace), (Clubs, Ace)] = false;
+
+val test90 = sum_cards [(Clubs, Num 2),(Clubs, Num 2)] = 4
+val test91 = sum_cards [(Hearts, Num 2), (Hearts, Num 9), (Clubs, Num 10)] = 21;
+val test91 = sum_cards [(Hearts, Ace), (Hearts, King), (Clubs, Num 4)] = 25;
+
+
+val test100 = score ([(Hearts, Num 4)], 2) = 3;
+val test101 = score ([(Hearts, Num 4), (Clubs, Num 2)], 2) = 12;
+val test102 = score ([(Hearts, Num 2),(Clubs, Num 4)], 10) = 4;
+val test103 = score ([(Hearts, Num 2),  (Hearts, Num 4), (Hearts, King)], 10)  = 9;
+val test104 = score ([(Hearts, Num 2), (Spades, King)], 20) = 8;
+val test105 = score ([(Hearts, Num 2), (Hearts, Num 2)], 10) = 3;
 (*
 
-val test8 = all_same_color [(Hearts, Ace), (Hearts, Ace)] = true
 
-val test9 = sum_cards [(Clubs, Num 2),(Clubs, Num 2)] = 4
 
 val test10 = score ([(Hearts, Num 2),(Clubs, Num 4)],10) = 4
 
