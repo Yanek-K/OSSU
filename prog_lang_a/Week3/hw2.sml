@@ -27,10 +27,9 @@ ASSUME each list in substitutions has no repeats
 fun get_substitutions1 (substitutions, str) =
     case substitutions of
 	[] => []
-      | head::rest => if isSome (all_except_option (str, head))
-		      then valOf (all_except_option (str, head))
-			   @ get_substitutions1 (rest, str)
-		      else get_substitutions1 (rest, str);
+      | head::rest => case all_except_option (str, head) of
+			  NONE => get_substitutions1 (rest, str)
+			| SOME xs => xs @ get_substitutions1 (rest, str)
 
 (* 1c
 Tail-Recursive version of get_substitutions1
@@ -40,11 +39,9 @@ fun get_substitutions2 (substitutions0, str) =
     let fun helper (substitutions, acc) =
 	    case substitutions of
 		 []  => acc
-	       | head :: rest => if isSome (all_except_option (str, head))
-				 then
-				     helper (rest,
-					     valOf (all_except_option (str, head))@acc)
-				 else helper (rest, acc)
+	       | head :: rest => case all_except_option (str, head) of
+				     NONE => helper (rest, acc)
+				   | SOME xs => helper (rest, xs @ acc) 
     in
 	helper (substitutions0, [])
     end;
@@ -91,7 +88,6 @@ fun card_color card =
 	(x, _) => if x = Hearts orelse x = Diamonds
 		  then Red else Black;
 
-
 (* 2b
 Produces the value of the card
  *)
@@ -111,7 +107,7 @@ fun remove_card (cardlist, card, e) =
     case cardlist of
 	[] => raise e
       | head::rest => if head = card then rest
-		      else head :: remove_card (cardlist, card, e);
+		      else head :: remove_card (rest, card, e);
 
 (* 2d
 Produces true if all the cards in the list are the same color
@@ -152,7 +148,40 @@ fun score (cardlist, goal) =
 	else prelim_score
     end;
 
+(* 2e
+card list * move list * int (goal) => score
+ *)
 
+fun officiate (cardlist, movelist, goal) =
+    let fun helper (cardlist, heldcards, movelist) =
+	    case movelist of
+		[] => heldcards
+	      | move::moves' => case move of
+				    Discard (x) => helper (cardlist, remove_card (heldcards, x, IllegalMove), moves')
+				  | Draw => case cardlist of
+						[] => heldcards
+					      | c::_ => case sum_cards (c::heldcards) > goal of
+							    true => c::heldcards
+							  | false => helper (remove_card (cardlist, c, IllegalMove), c::heldcards, movelist)
+    in
+	score (helper(cardlist, [], movelist), goal)
+    end;
+
+
+val test110 =  officiate ([(Hearts, Num 2),(Clubs, Num 4)],
+			  [Draw], 15) = 6
+
+val test12 = officiate ([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)],
+                        [Draw,Draw,Draw,Draw,Draw],
+                        42)
+             = 3
+
+val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
+                         [Draw,Discard(Hearts,Jack)],
+                         42);
+               false) 
+              handle IllegalMove => true)
+         
 
 							 
 					      
