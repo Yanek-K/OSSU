@@ -17,15 +17,32 @@ val test23 = get_substitutions1 ([["Fred", "Frederick"],
 				  ["Jeff", "Geoff", "Jeffrey"]], "Jeff")
 	     = ["Jeffrey", "Geoff", "Jeffrey"];
 
-							    (*
-val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
 
-val test3 = get_substitutions2 ([["foo"],["there"]], "foo") = []
-
-val test4 = similar_names ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], {first="Fred", middle="W", last="Smith"}) =
-	    [{first="Fred", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"},
-	     {first="Freddie", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}]
-
+val test40 = similar_names ([["Fred","Fredrick"],
+			    ["Elizabeth","Betty"],
+			    ["Freddie","Fred","F"]], 
+			    {first="Fred", middle="W", last="Smith"}) 
+	= [{first="Fred", last="Smith", middle="W"}, 
+	   {first="Fredrick", last="Smith", middle="W"},
+	   {first="Freddie", last="Smith", middle="W"}, 
+	   {first="F", last="Smith", middle="W"}];
+val test41 = similar_names ([["Mike, Michael"]],
+			    {first="Peter", last="Smith", middle="P"})
+	     = [{first="Peter", last="Smith", middle="P"}];
+val test42 = similar_names ([["Mike", "Michael"]],
+			    {first="Mike", last="Smith", middle="P"})
+	     = [{first="Mike", last="Smith", middle="P"},
+		{first="Michael", last="Smith", middle="P"}];
+val test43 = similar_names ([["Mike, Michael"], ["Pete", "Peter"]],
+			    {first="Mike", last="Smith", middle="P"})
+	     = [{first="Mike", last="Smith", middle="P"}];
+val test44 = similar_names ([["Mike", "Michael"], ["Mike", "Les", "King"]],
+			    {first="Mike", last="Smith", middle="P"})
+	     = [{first="Mike", last="Smith", middle="P"},
+		{first="Michael", last="Smith", middle="P"},
+		{first="Les", last="Smith", middle="P"},
+		{first="King", last="Smith", middle="P"}];
+(*
 val test5 = card_color (Clubs, Num 2) = Black
 
 val test6 = card_value (Clubs, Num 2) = 2

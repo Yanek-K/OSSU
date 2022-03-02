@@ -36,36 +36,39 @@ fun get_substitutions1 (substitutions, str) =
 Tail-Recursive version of get_substitutions1
  *)
 
-fun get_substitutions2 (substitutions, str) =
+fun get_substitutions2 (substitutions0, str) =
     let fun helper (substitutions, acc) =
 	    case substitutions of
 		 []  => acc
 	       | head :: rest => if isSome (all_except_option (str, head))
 				 then
 				     helper (rest,
-					     valOf (all_except_option (str, head))::acc)
+					     valOf (all_except_option (str, head))@acc)
 				 else helper (rest, acc)
     in
-	helper (substitutions, [])
+	helper (substitutions0, [])
     end;
 
 
+(* 1d
+string list list * full name -> full name list
+Produces all the full names you can produce by substituting the first name
+ *)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fun similar_names (strlist, name) =
+    let fun get_subs (name) =
+	    case name of 
+		{first=x, middle=y, last=z} => get_substitutions1(strlist, x)
+	fun helper subslist =
+	    case subslist of
+		[] => []
+	      | head :: rest => case name of
+				    {first=x, last=y, middle=z} =>
+				    [{first=head, last=y, middle=z}]
+				    @ helper (rest)
+    in
+	name::helper (get_subs (name))
+    end;
 
 (*
 (* you may assume that Num is always used with values 2, 3, ..., 10
