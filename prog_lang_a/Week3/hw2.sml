@@ -27,9 +27,9 @@ ASSUME each list in substitutions has no repeats
 fun get_substitutions1 (substitutions, str) =
     case substitutions of
 	[] => []
-      | head::rest => case all_except_option (str, head) of
-			  NONE => get_substitutions1 (rest, str)
-			| SOME xs => xs @ get_substitutions1 (rest, str)
+      | x::xs' => case all_except_option (str, x) of
+			  NONE => get_substitutions1 (xs', str)
+			| SOME xs => xs @ get_substitutions1 (xs', str)
 
 (* 1c
 Tail-Recursive version of get_substitutions1
@@ -39,9 +39,9 @@ fun get_substitutions2 (substitutions0, str) =
     let fun helper (substitutions, acc) =
 	    case substitutions of
 		 []  => acc
-	       | head :: rest => case all_except_option (str, head) of
-				     NONE => helper (rest, acc)
-				   | SOME xs => helper (rest, xs @ acc) 
+	       | x::xs' => case all_except_option (str, x) of
+			       NONE => helper (xs', acc)
+			     | SOME xs => helper (xs', xs @ acc) 
     in
 	helper (substitutions0, [])
     end;
@@ -66,10 +66,9 @@ fun similar_names (strlist, name) =
 	name::helper (get_subs (name))
     end;
 
-(*
-(* you may assume that Num is always used with values 2, 3, ..., 10
-   though it will not really come up *)
-*)
+
+(** Problem 2 **)
+
 datatype suit = Clubs | Diamonds | Hearts | Spades
 datatype rank = Jack | Queen | King | Ace | Num of int 
 type card = suit * rank
@@ -106,8 +105,8 @@ Removes the first occurence of card if in the card list, or exception
 fun remove_card (cardlist, card, e) =
     case cardlist of
 	[] => raise e
-      | head::rest => if head = card then rest
-		      else head :: remove_card (rest, card, e);
+      | x::xs' => if x = card then xs'
+		  else x :: remove_card (xs', card, e);
 
 (* 2d
 Produces true if all the cards in the list are the same color
@@ -128,7 +127,7 @@ fun sum_cards cardlist =
     let fun helper (cardlist,acc) =
 	    case cardlist of
 		[] => acc
-	      | head::rest =>  helper (rest, (card_value(head) + acc))
+	      | x::xs' =>  helper (xs', (card_value(x) + acc))
     in
 	helper(cardlist, 0)
     end;
@@ -152,42 +151,21 @@ fun score (cardlist, goal) =
 card list * move list * int (goal) => score
  *)
 
-fun officiate (cardlist, movelist, goal) =
-    let fun helper (cardlist, heldcards, movelist) =
-	    case movelist of
-		[] => heldcards
-	      | move::moves' => case move of
-				    Discard (x) => helper (cardlist, remove_card (heldcards, x, IllegalMove), moves')
-				  | Draw => case cardlist of
-						[] => heldcards
-					      | c::_ => case sum_cards (c::heldcards) > goal of
-							    true => c::heldcards
-							  | false => helper (remove_card (cardlist, c, IllegalMove), c::heldcards, movelist)
+fun officiate (cards, moves, goal) =
+    let fun helper (cards, moves, held) =
+	    case moves of
+		[] => held
+	      | x::xs' => case x of
+			      Discard x => helper (cards, xs', (remove_card (held, x, IllegalMove)))
+			    | Draw => case cards of
+					  [] => held
+					| c::cs' => let val curr_held = (c::held)
+						    in 
+							case sum_cards(curr_held) > goal of
+							    true => curr_held
+							  | false => helper (cs', xs',curr_held)
+						    end
     in
-	score (helper(cardlist, [], movelist), goal)
+	score (helper (cards, moves, []), goal)
     end;
 
-
-val test110 =  officiate ([(Hearts, Num 2),(Clubs, Num 4)],
-			  [Draw], 15) = 6
-
-val test12 = officiate ([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)],
-                        [Draw,Draw,Draw,Draw,Draw],
-                        42)
-             = 3
-
-val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
-                         [Draw,Discard(Hearts,Jack)],
-                         42);
-               false) 
-              handle IllegalMove => true)
-         
-
-							 
-					      
-					      
-
-
-    
-								
-								
