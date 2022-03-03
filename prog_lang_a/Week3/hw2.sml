@@ -3,7 +3,7 @@
 
 (** Problem 1 **)
 
-fun same_string(s1 : string, s2 : string) =
+fun same_string (s1 : string, s2 : string) =
     s1 = s2;
 
 (* 1a
@@ -169,3 +169,20 @@ fun officiate (cards, moves, goal) =
 	score (helper (cards, moves, []), goal)
     end;
 
+
+fun officiate_v2 (cards, moves, goal) =
+    let
+	fun play ([], _, held) = score(held, goal)
+	  | play (_, [], held) = score(held, goal)
+	  | play (card::cards, Draw::moves, held)  =
+	    let
+		val new_held = card::held
+		val sum = sum_cards(new_held)
+	    in
+		if sum > goal then score (new_held, goal) else play (cards, moves, new_held)
+	    end
+	  | play (cards, (Discard card)::moves, held) =
+	    play (cards, moves, remove_card (held, card, IllegalMove))
+    in
+	play (cards, moves, [])
+    end;
