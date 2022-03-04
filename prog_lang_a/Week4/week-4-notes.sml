@@ -240,3 +240,83 @@ fun f4_again (xs, s) =
 
 
 							    
+(** Practice **)
+
+fun n_times (f, n, x) =
+    if n = 0
+    then x
+    else f (n_times (f, n-1, x));
+
+fun double x =
+    2 * x;
+
+val x1 = n_times (double, 4, 7);
+
+fun increment x =
+    x + 1;
+
+val x2 = n_times (increment, 1, 100);
+
+val x3 = n_times (tl,2,[4,8,12,16]);
+
+fun triple x =
+    3 * x;
+
+val x4 = n_times (triple, 3, 1);
+
+fun triple_n_times_bad (n, x) = n_times (triple, n, x);
+
+fun triple_n_times_good (n, x) =
+    let fun triple x = 3 * x
+    in
+	n_times (triple, n, x)
+    end;
+
+fun triple_n_times_different (n, x) =
+    n_times (let fun triple x = 3 * x in triple end, n, x);
+
+fun triple_n_time_best (n, x) =
+    n_times ((fn y => 3 * y), n, x);
+
+fun increment x = x + 1;
+val increment = fn x => x + 1;
+
+fun map (f, xs) =
+    case xs of
+	[] => []
+      | x::xs' => (f x) :: map (f, xs');
+
+fun increment x =
+    1 + x;
+
+val x5 = map (increment, [1,2,3]);
+
+val x6 = map ((fn x => x + 1), [2,3,4,5,6]);
+
+val x7 = map ((fn x => Math.sqrt (Real.fromInt x)), [2,3,4,5]);
+
+val lst1=["Alpine", "Avalanche", "Powder", "Snowflake", "Summit"];
+
+val length_of_lst1_items = map ((fn x => String.size x), lst1);
+
+fun filter (f, xs) =
+    case xs of
+	[] => []
+      | x::xs' => if f x
+		  then x :: (filter (f, xs'))
+		  else (filter (f, xs'));
+
+val lst2 = [1,2,3,4,5,6,7,8,35,3,143,531,124,42,134,51362,623];
+val only_even = filter ((fn x => x mod 2 = 0), lst2);
+
+val lst3 = [(1,"next"), (3,"hello"), (4, "me"), (6, "today")];
+
+val get_all_even_pairs = filter ((fn (v,_) => v mod 2 = 0), lst3);
+
+fun get_all_even_pairs_with_4 lst = filter ((fn (v,_) => v = 4),
+					filter ((fn (v,_) => v mod 2 = 0, lst)));
+
+
+val with_4 = get_all_even_pairs_with_4 (lst3);
+
+
