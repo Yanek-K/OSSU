@@ -93,6 +93,7 @@ val double = double_or_triple (fn x => x - 3 = 4); (* Produces the function 2 * 
 val nine = (double_or_triple (fn x => x = 42)) 3; (* Passes 3 to the function 3 * x *)
 
 
+
 (* Higher order functions over our own datatypes *)
 
 datatype exp = Constant of int
@@ -196,6 +197,7 @@ val _ = print "\n With All Shorter Than 3: ";
 val x1 =  all_shorter_than_3 (["ab", "cs", "def", "a"], "b");
 
 
+
 (** Fold and More Closures **)
 
 (* Accumulates answer by repeatedly applying f to answer so far *)
@@ -231,4 +233,10 @@ fun f4_again (xs, s) =
     in
 	f5 ((fn y => String.size y < i), xs)
     end;
+
+
+
+(** Closure Idiom: Combining Functions **)
+
+
 							    
