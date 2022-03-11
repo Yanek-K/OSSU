@@ -66,6 +66,17 @@ fun similar_names (strlist, name) =
 	name::helper (get_subs (name))
     end;
 
+fun similar_names2 (substitutions, name) =
+    let
+	val {first=f, middle=m, last=l} = name
+	fun make_names xs =
+	    case xs of
+		[] => []
+	      | x::xs' => {first=x, middle=m, last=l}::(make_names (xs'))
+    in
+	name::make_names (get_substitutions2 (substitutions, f))
+    end;
+
 
 (** Problem 2 **)
 

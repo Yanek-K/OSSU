@@ -23,7 +23,7 @@ fun n_times (f, n, x) =
     else f (n_times(f, n-1, x));
 
 fun increment x = x + 1;
-fun double x = x * 2;
+fun double x = x + x;
 fun triple x = x * 3;
 
 val double_n_times = n_times (double, 10, 5);

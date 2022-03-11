@@ -33,10 +33,7 @@ val test42 = similar_names ([["Mike", "Michael"]],
 			    {first="Mike", last="Smith", middle="P"})
 	     = [{first="Mike", last="Smith", middle="P"},
 		{first="Michael", last="Smith", middle="P"}];
-val test43 = similar_names ([["Mike, Michael"], ["Pete", "Peter"]],
-			    {first="Mike", last="Smith", middle="P"})
-	     = [{first="Mike", last="Smith", middle="P"}];
-val test44 = similar_names ([["Mike", "Michael"], ["Mike", "Les", "King"]],
+val test45 = similar_names ([["Mike", "Michael"], ["Mike", "Les", "King"]],
 			    {first="Mike", last="Smith", middle="P"})
 	     = [{first="Mike", last="Smith", middle="P"},
 		{first="Michael", last="Smith", middle="P"},
