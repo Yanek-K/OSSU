@@ -140,6 +140,44 @@ fun f4again (xs, s) =
 val test10 = f4again (["ab", "cd", "erf", "qwe", "asdf"], "asd");
 
 
+type student_id = int;
+type grade = int (* must be in 0 - 100 range *);
+type final_grade = { id : student_id, grade : grade option};
+
+type date = int * int * int;
+
+fun number_in_months (dates, month) =
+    case dates of
+	[] => 0
+      | (y,m,d)::xs' => if m = month then 1 + number_in_months (xs', month)
+			else number_in_months (xs', month);
+
+val test11  = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],
+				2);
+
+fun get_month date =
+    case date of (y, m, d) => m;
+    
+fun number_in_months2 (dates, month) =
+    foldl (fn (x,y) => x + (if (get_month y) = month then 1 else 0), 0, dates)
+
+val test12 = number_in_months2 ([(2012,2,28),(2013,2,1),(2011,3,31),(2011,4,28)],
+				2);
+
+fun dates_in_month (dates, month) =
+    filter (fn x => (get_month x) = month, dates);
+
+val test13 = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]
+val test14 = dates_in_month ([(2012,1,23),(2012,2,23),(2013,1,23)], 1) = [(2012,1,23),(2013,1,23)];
+
+fun dates_in_months (dates, months) =
+    foldl (fn (x, y) => dates_in_month (dates, y)::x, [], months);
+									     
+
+val test15 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]);
+
+
+											       
 (** 1
 ('b -> c' option) -> ('a -> 'b option) -> 'a -> 'c option 
 Composes two functions with "optional" values. If either returns NONE, then the result is NONE 
