@@ -177,6 +177,44 @@ fun dates_in_months (dates, months) =
 val test15 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]);
 
 
+(*
+Sum All Numbers in a Range
+
+We'll pass you an array of two numbers. Return the sum of those two numbers plus the sum of all the numbers between them. The lowest number will not always come first.
+
+For example, sumAll([4,1]) should return 10 because sum of all the numbers between 1 and 4 (both inclusive) is 10.
+*)
+
+fun sort_list ([i,j]) =
+    if i < j then [i,j] else [j, i];
+
+fun sum_numbers xs =
+    let fun sum ([i,j], acc) =
+	    if i = j then acc + j
+	    else sum ([i + 1, j], acc + i)
+    in
+	sum ((sort_list xs), 0)
+    end;
+
+
+val test20 = sum_numbers [1,3] = 6;
+val test21 = sum_numbers [2,4] = 9;
+val test22 = sum_numbers [4,1] = 10;
+
+
+
+(* Takes the total amount of clients and 
+   produces the total income after x months
+   assuming one new client a month at $250/mo *)
+
+(* Num_months => Total income *)
+
+
+
+
+
+    
+     
 											       
 (** 1
 ('b -> c' option) -> ('a -> 'b option) -> 'a -> 'c option 
