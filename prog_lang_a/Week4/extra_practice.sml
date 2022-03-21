@@ -201,23 +201,17 @@ val test20 = sum_numbers [1,3] = 6;
 val test21 = sum_numbers [2,4] = 9;
 val test22 = sum_numbers [4,1] = 10;
 
+infix !>
+	  
+fun sum_numbers_fold xs =
+    let fun make_list ([i,j]) =
+	    if i = j then [j]
+	    else
+		i :: make_list ([i+1, j])
+    in
+	foldl ((fn (x,y) => x + y), 0, (make_list o sort_list) xs)
+    end;
 
-
-(* Takes the total amount of clients and 
-   produces the total income after x months
-   assuming one new client a month at $250/mo *)
-
-(* Num_months => Total income *)
-
-
-
-
-
-    
-     
-											       
-(** 1
-('b -> c' option) -> ('a -> 'b option) -> 'a -> 'c option 
-Composes two functions with "optional" values. If either returns NONE, then the result is NONE 
- *)
+val test23 = sum_numbers_fold ([1,3]);
+val test24 = sum_numbers_fold ([4,1]);
 

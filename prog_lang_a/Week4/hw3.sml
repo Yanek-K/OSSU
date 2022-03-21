@@ -1,47 +1,37 @@
 (* Coursera Programming Languages, Homework 3, Provided Code *)
-(*
-Function only_capitals 
-	 Takes a string list and returns a string list		
-	 only the strings in the argument that start 
-	 with an uppercase letter. 
-	 Assume all strings have at least 1 character.	    
-	 Use List.filter, Char.isUpper, and String.sub 
-	 to make a 1-2 line solution.
 
-String.sub (s, i) returns the char at ith index of s
-*)
-
-fun get_first_letter x =
-    String.sub (x, 0);
-
-val test1 = get_first_letter "abc";
-
-fun check_if_upper x =
-    Char.isUpper (get_first_letter x);
-
-val test2 = check_if_upper "Abc";
-
+(*--  #1  --*)
 fun only_capitals xs =
-    case xs of
-	[] => []
-      | x::xs' => if check_if_upper x then x :: only_capitals xs'
-		  else only_capitals xs';
+    List.filter (fn x => Char.isUpper (String.sub (x,0))) xs;
 
-val test3 = only_capitals (["abc", "def", "De", "Cd"]);
 
-fun only_capitals_2 xs =
-    List.filter (check_if_upper x, xs);
+(*--  #2  --*)
+fun longest_string1 xs =
+    List.foldl (fn (x, y) => if String.size y >= String.size x
+			     then y
+			     else x) "" xs;
 
-(*
-fun only_capitals xs =
-    let fun get_first_letter x =
-	    String.sub (x, 0)
-	fun check_if_upper x =
-	    Char.isUpper (get_first_letter x)
-    in
-	List.filter (check_if_upper, xs)
-    end;
-*)	
+
+(*--  #3  --*)
+fun longest_string2 xs =
+    List.foldl (fn (x, y) => if String.size y > String.size x
+			     then y
+			     else x) "" xs;
+
+
+val test1 = only_capitals ["A","B","C"] = ["A","B","C"];
+
+val test2 = longest_string1 ["A","bc","C"] = "bc";
+
+val test3 = longest_string2 ["A","bcd","C", "de", "def"];
+						       
+
+
+(*--  #2  --*)
+(*--  #2  --*)
+(*--  #2  --*)
+(*--  #2  --*)
+
     
 (*
 exception NoAnswer
