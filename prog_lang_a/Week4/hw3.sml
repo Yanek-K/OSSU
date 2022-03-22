@@ -1,5 +1,23 @@
 (* Coursera Programming Languages, Homework 3, Provided Code *)
 
+exception NoAnswer
+
+datatype pattern = Wildcard
+		 | Variable of string
+		 | UnitP
+		 | ConstP of int
+		 | TupleP of pattern list
+		 | ConstructorP of string * pattern
+
+datatype valu = Const of int
+	      | Unit
+	      | Tuple of valu list
+	      | Constructor of string * valu
+
+
+(***************  START HERE ************** *)
+
+			       
 (*--  #1  --*)
 fun only_capitals xs =
     List.filter (fn x => Char.isUpper (String.sub (x,0))) xs;
@@ -30,46 +48,46 @@ val longest_capitalized = longest_string3 o only_capitals;
 
 
 (*--  #6  --*)
-val rev_string = String.implode o List.rev o String.explode
+val rev_string = String.implode o List.rev o String.explode;
 
 						 
 (*--  #7 --*)
+fun first_answer f ls =
+    case ls of
+	[] => raise NoAnswer
+      | x::xs' => case f(x) of
+		      NONE => first_answer f xs'
+		    | SOME v => v; 
 
-    
-(*
-exception NoAnswer
+(*--  #8 --*)
+fun all_answers f lst =
+    let val has_none = List.exists (fn x => f(x) = NONE)
+	val final_result = List.foldl (fn (x, acc) => (case f(x) of SOME v => v@acc))
+    in
+	case lst of
+	    [] => SOME []
+	  | _ => if has_none lst
+		 then NONE
+		 else SOME (final_result [] lst)
+    end;
+		     
+	   
 
-datatype pattern = Wildcard
-		 | Variable of string
-		 | UnitP
-		 | ConstP of int
-		 | TupleP of pattern list
-		 | ConstructorP of string * pattern
-
-datatype valu = Const of int
-	      | Unit
-	      | Tuple of valu list
-	      | Constructor of string * valu
+(*--  #9 --*)
 
 fun g f1 f2 p =
     let 
 	val r = g f1 f2 
     in
 	case p of
-	    Wildcard          => f1 ()
-	  | Variable x        => f2 x
-	  | TupleP ps         => List.foldl (fn (p,i) => (r p) + i) 0 ps
+	    Wildcard   => f1 ()
+	  | Variable x => f2 x
+	  | TupleP ps  => List.foldl (fn (p,i) => (r p) + i) 0 ps
 	  | ConstructorP(_,p) => r p
 	  | _                 => 0
     end
 
-(**** for the challenge problem only ****)
 
-datatype typ = Anything
-	     | UnitT
-	     | IntT
-	     | TupleT of typ list
-	     | Datatype of string
-
-(**** you can put all your code here ****)
-*)
+(*--  #10 --*)
+(*--  #11 --*)
+(*--  #12 --*)
