@@ -8,29 +8,32 @@ fun only_capitals xs =
 (*--  #2  --*)
 fun longest_string1 xs =
     List.foldl (fn (x, y) => if String.size y >= String.size x
-			     then y
-			     else x) "" xs;
+			     then y else x) "" xs;
 
 
 (*--  #3  --*)
 fun longest_string2 xs =
     List.foldl (fn (x, y) => if String.size y > String.size x
-			     then y
-			     else x) "" xs;
+			     then y else x) "" xs;
+
+(*--  #4 --*)
+fun longest_string_helper f =
+    List.foldl (fn (x,y) => if f (String.size x, String.size y)
+			    then y else x) "";
+    
+val longest_string3 = longest_string_helper (fn (x,y) => (y >= x));
+val longest_string4 = longest_string_helper (fn (x,y) => (y > x));
+
+	
+(*--  #5  --*)
+val longest_capitalized = longest_string3 o only_capitals;
 
 
-val test1 = only_capitals ["A","B","C"] = ["A","B","C"];
+(*--  #6  --*)
+val rev_string = String.implode o List.rev o String.explode
 
-val test2 = longest_string1 ["A","bc","C"] = "bc";
-
-val test3 = longest_string2 ["A","bcd","C", "de", "def"];
-						       
-
-
-(*--  #2  --*)
-(*--  #2  --*)
-(*--  #2  --*)
-(*--  #2  --*)
+						 
+(*--  #7 --*)
 
     
 (*
