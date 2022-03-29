@@ -1,5 +1,4 @@
 (* Coursera Programming Languages, Homework 3, Provided Code *)
-
 exception NoAnswer
 
 datatype pattern = Wildcard
@@ -85,8 +84,22 @@ fun g f1 f2 p =
 	  | TupleP ps  => List.foldl (fn (p,i) => (r p) + i) 0 ps
 	  | ConstructorP(_,p) => r p
 	  | _                 => 0
-    end
+    end;
 
+(*-- #9a --*)
+
+fun count_wildcards (p: pattern) =
+    g (fn v => 1) (fn v => 0) p;
+
+(*-- #9b --*)
+
+fun count_wild_and_variable_lengths (p:pattern) =
+    g (fn v => 1) (fn x => String.size x) p;
+
+(*-- #9c --*)
+
+fun count_some_var (s,p) =
+    g (fn v => 0) (fn x => if x = s then 1 else 0) p;
 
 (*--  #10 --*)
 (*--  #11 --*)
