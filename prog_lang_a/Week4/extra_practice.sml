@@ -215,3 +215,17 @@ fun sum_numbers_fold xs =
 val test23 = sum_numbers_fold ([1,3]);
 val test24 = sum_numbers_fold ([4,1]);
 
+(*
+Write a function compose_opt : 
+('b -> 'c option) -> 
+('a -> 'b option) -> 
+'a -> 'c option
+that composes two functions with "optional" values. 
+If either function returns NONE, then the result is NONE.
+*)
+
+fun compose_opt f g x =
+    case g(x) of
+	NONE => NONE
+      | SOME y => f (SOME y);
+

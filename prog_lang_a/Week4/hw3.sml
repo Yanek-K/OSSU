@@ -91,16 +91,67 @@ fun g f1 f2 p =
 fun count_wildcards (p: pattern) =
     g (fn v => 1) (fn v => 0) p;
 
+
 (*-- #9b --*)
 
 fun count_wild_and_variable_lengths (p:pattern) =
     g (fn v => 1) (fn x => String.size x) p;
+
 
 (*-- #9c --*)
 
 fun count_some_var (s,p) =
     g (fn v => 0) (fn x => if x = s then 1 else 0) p;
 
+
 (*--  #10 --*)
+
+fun check_pat pattern =
+    let
+	fun variables pattern =
+	    case pattern of
+		Variable x  => [x]
+	      | TupleP ps => List.foldl (fn (v,vs') => vs' @ variables(v)) [] ps
+	      | ConstructorP(_,p) => variables(p)
+	      | _ => []
+	fun repeats lst =
+	    case lst of
+		[] => true
+	      | x::xs' => if List.exists (fn a => a = x) xs' then false else repeats(xs')
+    in
+	repeats (variables (pattern))
+    end;
+
+
 (*--  #11 --*)
+
+fun match(v: valu, p: pattern) =
+    case p of
+        Variable x => SOME [(x, v)]
+      | UnitP =>
+        (case v of
+             Unit => SOME []
+           | _ => NONE)
+      | Wildcard => SOME []
+      | ConstP k =>
+        (case v of
+             Const(v) => if k = v then SOME [] else NONE
+           | _ => NONE)
+      | TupleP ps =>
+        (case v of
+             Tuple(vs) => if List.length vs = List.length ps
+                          then all_answers match (ListPair.zip(vs, ps))
+                          else NONE
+           | _ => NONE)
+      | ConstructorP(s1,pp) =>
+        (case v of
+             Constructor(s2,vv) =>
+             if s1 = s2 then match(vv,pp) else NONE
+           | _ => NONE)
+            
+
 (*--  #12 --*)
+	    
+fun first_match v ps =
+    SOME(first_answer (fn p => match(v, p)) ps) handle NoAnswer => NONE
+
